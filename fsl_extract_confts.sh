@@ -32,7 +32,7 @@ motion_SD=`awk '{delta = $1 - avg; avg += delta / NR; mean2 += delta * ($1 - avg
 spike_thresh=`echo $motion_mean + $sd_thresh*$motion_SD | bc`
 rel_rms=$paths\mc/prefiltered_func_data_mcf_rel.rms
 paste $rel_rms>tmp.txt
-matlab -nosplash -nojvm -r "addpath /home/rgerraty/scripts/MATLAB/;make_spike_regs('`echo $paths`','tmp.txt',`echo $spike_thresh`, `echo $sd_thresh`);quit"
+matlab -nosplash -nojvm -r "addpath ~/GitHub/rl_flexibility/;make_spike_regs('`echo $paths`','tmp.txt',`echo $spike_thresh`, `echo $sd_thresh`);quit"
 rm -rf tmp.txt
 
 for i in $paths;
