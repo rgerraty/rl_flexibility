@@ -13,5 +13,5 @@ q_null=zeros(size(res_pars,1),size(omeg_pars,1),nsim);
     			o=o+1;
   			end
   			r=r+1;
-  			end
+  		end
   	end
