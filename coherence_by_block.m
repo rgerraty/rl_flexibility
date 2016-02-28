@@ -14,6 +14,7 @@ for sub=1:size(subs,1)
 	learn_runs=dir(strcat(base,subs(sub).name,'/','Learn*'));
 	num_runs=size(learn_runs,1);
 	for run=1:num_runs
+		tss=dlmread(strcat(base,subs(sub).name,'/',learn_runs(run).name,rois));  
 		ts_length=size(tss,1);
 		k=1;
 		for i=1:size(tss,1)/block_size
