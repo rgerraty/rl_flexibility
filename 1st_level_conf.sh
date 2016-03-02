@@ -3,8 +3,8 @@
 ####CODE for running 1st level confound analysis, need to have successfully run initial preprocessing and created confound regressors to run
 if [ -z $2 ]; then
 echo Script for running 1st level confound regression\. 
-Make sure to enter input volumes as well as which confound files to include in analysis'\n'Usage\:
-'\n'~/GitHub/rl_flexibility/1st_level_conf.sh filtered_func_data.nii.gz 36par+spikes.txt
+echo Make sure to enter input volumes as well as which confound files to include in analysis'\n'Usage\:
+echo '\n'~/GitHub/rl_flexibility/1st_level_conf.sh filtered_func_data.nii.gz 36par+spikes.txt
 
 else
 #paths to feat directories containing preprocessed data
