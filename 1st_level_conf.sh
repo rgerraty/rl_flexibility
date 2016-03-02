@@ -13,20 +13,30 @@ else
 #check for filtered data, get TR and number of volumes, create and run .fsf file from template 
 if [ -e $1 ];
 	then 
-	conf=$(readlink -e $2)
-	filtdata=$(readlink -e $1)
-	out=$(dirname $filtdata/../$(basename $1 .txt))
-	
-	TR=`fslinfo $filtdata | grep pixdim4 | awk '{ print $2}'`
-	#get TR
-	vols=`fslinfo $filtdata | grep ^dim4 | awk '{ print $2}'`
-	#get number of volumes
-	#replace dummy lines in template fsf to make subject-specific temp fsf file
-	sed -e 's:XXOUTPUTXX:'$out':g' -e 's:XXTRXX:'$TR':g' -e 's:XXVOLSXX:'$vols':g' -e 's:XX4DDATAXX:'$filtdata':g' -e 's:XXCONFXX:'$conf':g'<~/GitHub/rl_flexibility/conf_reg_design.fsf>tmp.fsf
-	feat tmp.fsf #run temp file
-	rm -rf tmp.fsf
+	if [ -e $2 ];
+		then
+		conf=$(readlink -e $2)
+		filtdata=$(readlink -e $1)
+		out=$(dirname $filtdata/../$(basename $1 .txt))
+		
+		#get TR
+		TR=`fslinfo $filtdata | grep pixdim4 | awk '{ print $2}'`
 
-	else echo -e $1 does not exist.
+		#get number of volumes
+		vols=`fslinfo $filtdata | grep ^dim4 | awk '{ print $2}'`
+		
+		#replace dummy lines in template fsf to make subject-specific temp fsf file
+		sed -e 's:XXOUTPUTXX:'$out':g' -e 's:XXTRXX:'$TR':g' -e 's:XXVOLSXX:'$vols':g' -e 's:XX4DDATAXX:'$filtdata':g' -e 's:XXCONFXX:'$conf':g'<~/GitHub/rl_flexibility/conf_reg_design.fsf>tmp.fsf
+		feat tmp.fsf #run temp file
+		rm -rf tmp.fsf
+	
+	else 
+		echo -e $2 does not exist
+	
 	fi
+
+else 
+	echo -e $1 does not exist.
+fi
 
 fi
