@@ -8,7 +8,7 @@ if [ -z $2 ]
 	then
 	echo Code for extracting confound timecourses from preprocessed data
 	echo Need to provide feat directory as well as anatomical directory with csf and white matter masks
-	echo Can also provide z-score cut-off for high-motion timepoints (spikes)
+	echo Can also provide z-score cut-off for high-motion timepoints \(spikes\)
 	echo Usage:
 	echo ~/GitHub/rl_flexibility/fsl_extract_confts.sh Learn1_PEprior.feat/ structural/mprage.anat 2.5
 else
