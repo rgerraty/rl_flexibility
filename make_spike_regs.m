@@ -11,7 +11,7 @@ for i=1:size(rel_rms,2)
 	end
 	if size(ind,1)>0
 		spikes=[zeros(1,size(spikes,2));spikes];
-		dlmwrite(char(strcat(paths(i),'spike_regressors_',num2str(sd_thresh),'_SD.txt')), spikes, 'delimiter', ' ');
+		dlmwrite(char(strcat(paths(i),'/spike_regressors_',num2str(sd_thresh),'_SD.txt')), spikes, 'delimiter', ' ');
 		clear spikes
 	end
 end
