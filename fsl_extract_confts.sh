@@ -26,12 +26,14 @@ else
 	echo generating confound masks...
 	fslmaths `ls $struct/*_pve_2.nii.gz` -thr .75 -bin $struct/wm_thr75.nii.gz;
 	fslmaths `ls $struct/*_pve_0.nii.gz` -thr .75 -bin $struct/csf_thr75.nii.gz;
+	fslmaths `ls $struct/*_pve_1.nii.gz` -thr .75 -bin $struct/gm_thr75.nii.gz;
 	flirt -in $struct/wm_thr75.nii.gz -ref $feat/reg/example_func.nii.gz -applyxfm -init $feat/reg/highres2example_func.mat -out $feat/reg/wm; 
 	flirt -in $struct/csf_thr75.nii.gz -ref $feat/reg/example_func.nii.gz -applyxfm -init $feat/reg/highres2example_func.mat -out $feat/reg/csf;
+	flirt -in $struct/gm_thr75.nii.gz -ref $feat/reg/example_func.nii.gz -applyxfm -init $feat/reg/highres2example_func.mat -out $feat/reg/gm;
 	fslmeants -i $feat/filtered_func_data.nii.gz -o $feat/csf.txt -m $feat/reg/csf; 
 	fslmeants -i $feat/filtered_func_data.nii.gz -o $feat/wm.txt -m $feat/reg/wm;
-	fslmeants -i $feat/filtered_func_data.nii.gz -o $feat/wb.txt -m $feat/mask
-	paste -d "  " $feat/wb.txt $feat/wm.txt $feat/csf.txt $feat/mc/prefiltered_func_data_mcf.par > $feat/9par.txt;
+	fslmeants -i $feat/filtered_func_data.nii.gz -o $feat/gm.txt -m $feat/gm
+	paste -d "  " $feat/gm.txt $feat/wm.txt $feat/csf.txt $feat/mc/prefiltered_func_data_mcf.par > $feat/9par.txt;
 	~/GitHub/rl_flexibility/mp_diffpow_rtg.sh $feat/9par.txt $feat/9par_sq_der_sqder
 	/usr/share/fsl/5.0/bin/mp_diffpow.sh $feat/mc/prefiltered_func_data_mcf.par $feat/6par_sq_der_sqder
 	cut -f22-40 -d\  $feat/9par_sq_der_sqder.dat>$feat/9par_diff.txt;
