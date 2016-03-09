@@ -52,10 +52,10 @@ else
 
 	if [ -e $feat/spike_regressors_$sd_thresh\_SD.txt ];
 		then 
-		paste -d "  " $feat/36_par_conf.txt $feat/spike_regressors_2.5_SD.txt>$feat/36par+spikes.txt; 
-		paste -d "  " $feat/18_par_conf.txt $feat/spike_regressors_2.5_SD.txt >$feat/18par+spikes.txt;
-		paste -d "  " $feat/24_par_conf.txt $feat/spike_regressors_2.5_SD.txt >$feat/24par+spikes.txt;
-		paste -d "  " $feat/12_par_conf.txt $feat/spike_regressors_2.5_SD.txt>$feat/12par+spikes.txt;
+		paste -d "  " $feat/36_par_conf.txt $feat/spike_regressors_$sd_thresh_SD.txt>$feat/36par+spikes.txt; 
+		paste -d "  " $feat/18_par_conf.txt $feat/spike_regressors_$sd_thresh_SD.txt >$feat/18par+spikes.txt;
+		paste -d "  " $feat/24_par_conf.txt $feat/spike_regressors_$sd_thresh_SD.txt >$feat/24par+spikes.txt;
+		paste -d "  " $feat/12_par_conf.txt $feat/spike_regressors_$sd_thresh_SD.txt>$feat/12par+spikes.txt;
 	else 
 		for j in `ls $feat/*par_conf.txt`; 
 			do cp $j $feat/`basename $j | cut -f1 -d_`par+spikes.txt
