@@ -46,9 +46,9 @@ else
 	paste -d "  "  $feat/mc/prefiltered_func_data_mcf.par $feat/6par_diff.txt> $feat/12_par_conf.txt;
 	paste -d "  " $feat/mc/prefiltered_func_data_mcf.par $feat/6par_sq_der_sqder.dat > $feat/24_par_conf.txt;
 
-
+	#this was originally meant to go across runs, but mean still works
 	motion_mean=`awk '{sum+=$1} END {print sum/NR}' $feat/mc/prefiltered_func_data_mcf_rel_mean.rms`
-	motion_SD=`awk '{delta = $1 - avg; avg += delta / NR; mean2 += delta * ($1 - avg); } END { print sqrt(mean2 / NR); }' $feat/mc/prefiltered_func_data_mcf_rel_mean.rms`
+	motion_SD=`awk '{delta = $1 - avg; avg += delta / NR; mean2 += delta * ($1 - avg); } END { print sqrt(mean2 / NR); }' $feat/mc/prefiltered_func_data_mcf_rel.rms`
 	spike_thresh=`echo $motion_mean + $sd_thresh*$motion_SD | bc`
 	rel_rms=$feat/mc/prefiltered_func_data_mcf_rel.rms
 	paste $rel_rms>tmp.txt
