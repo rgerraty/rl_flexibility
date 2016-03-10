@@ -17,7 +17,7 @@ if [ -e $1 ];
 		then
 		conf=$(readlink -e $2)
 		filtdata=$(readlink -e $1)
-		out=$(dirname $filtdata/../$(basename $1 .txt))
+		out=$(dirname $filtdata/../$(basename $2 .txt))
 		
 		#get TR
 		TR=`fslinfo $filtdata | grep pixdim4 | awk '{ print $2}'`
