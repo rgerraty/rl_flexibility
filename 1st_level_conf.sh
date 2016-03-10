@@ -28,7 +28,7 @@ if [ -e $1 ];
 		vols=`fslinfo $filtdata | grep ^dim4 | awk '{ print $2}'`
 		
 		#replace dummy lines in template fsf to make subject-specific temp fsf file
-		sed -e 's:XXOUTPUTXX:'$out':g' -e 's:XXTRXX:'$TR':g' -e 's:XXVOLSXX:'$vols':g' -e 's:XX4DDATAXX:'$filtdata':g' -e 's:XXCONFXX:'$conf':g'<~/GitHub/rl_flexibility/conf_reg_design.fsf>tmp.fsf
+		sed -e 's:XXOUTPUTXX:'$out':g' -e 's:XXTRXX:'$TR':g' -e 's:XXVOLSXX:'$vols':g' -e 's:XX4DDATAXX:'$filtdata_tmp':g' -e 's:XXCONFXX:'$conf':g'<~/GitHub/rl_flexibility/conf_reg_design.fsf>tmp.fsf
 		feat tmp.fsf #run temp file
 		rm -rf tmp.fsf
 		rm -rf $filtdata_tmp
