@@ -13,12 +13,9 @@ set fmri(level) 1
 # Which stages to run
 # 0 : No first-level analysis (registration and/or group stats only)
 # 7 : Full first-level analysis
-# 1 : Pre-Stats
-# 3 : Pre-Stats + Stats
-# 2 :             Stats
-# 6 :             Stats + Post-stats
-# 4 :                     Post-stats
-set fmri(analysis) 6
+# 1 : Pre-processing
+# 2 : Statistics
+set fmri(analysis) 2
 
 # Use relative filenames
 set fmri(relative_yn) 0
@@ -53,7 +50,7 @@ set fmri(multiple) 1
 # Higher-level input type
 # 1 : Inputs are lower-level FEAT directories
 # 2 : Inputs are cope images from FEAT directories
-set fmri(inputtype) 1
+set fmri(inputtype) 2
 
 # Carry out pre-stats processing?
 set fmri(filtering_yn) 0
@@ -70,15 +67,10 @@ set fmri(noise) 0.66
 # Noise AR(1)
 set fmri(noisear) 0.34
 
-# Post-stats-only directory copying
-# 0 : Overwrite original post-stats results
-# 1 : Copy original FEAT directory for new Contrasts, Thresholding, Rendering
-set fmri(newdir_yn) 0
-
 # Motion correction
 # 0 : None
 # 1 : MCFLIRT
-set fmri(mc) 1
+set fmri(mc) 0
 
 # Spin-history (currently obsolete)
 set fmri(sh_yn) 0
