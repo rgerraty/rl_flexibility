@@ -17,13 +17,13 @@ if [ -e $1 ];
 		then
 		conf=$(readlink -e $2)
 		filtdata=$(readlink -e $1)
-		out=$(dirname $filtdata/../$(basename $2 .txt))
+		out=$(dirname $filtdata)/../$(basename $conf .txt)
 		
 		#get TR
-		TR=`fslinfo $filtdata | grep pixdim4 | awk '{ print $2}'`
+		TR=`fslinfo $filtdata | grep pixdim4 | awk '{ print $conf}'`
 
 		#get number of volumes
-		vols=`fslinfo $filtdata | grep ^dim4 | awk '{ print $2}'`
+		vols=`fslinfo $filtdata | grep ^dim4 | awk '{ print $conf}'`
 		
 		#replace dummy lines in template fsf to make subject-specific temp fsf file
 		sed -e 's:XXOUTPUTXX:'$out':g' -e 's:XXTRXX:'$TR':g' -e 's:XXVOLSXX:'$vols':g' -e 's:XX4DDATAXX:'$filtdata':g' -e 's:XXCONFXX:'$conf':g'<~/GitHub/rl_flexibility/conf_reg_design.fsf>tmp.fsf
