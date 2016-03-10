@@ -20,10 +20,10 @@ if [ -e $1 ];
 		out=$(dirname $filtdata)/../$(basename $conf .txt)
 		
 		#get TR
-		TR=`fslinfo $filtdata | grep pixdim4 | awk '{ print $conf}'`
+		TR=`fslinfo $filtdata | grep pixdim4 | awk '{ print $2}'`
 
 		#get number of volumes
-		vols=`fslinfo $filtdata | grep ^dim4 | awk '{ print $conf}'`
+		vols=`fslinfo $filtdata | grep ^dim4 | awk '{ print $2}'`
 		
 		#replace dummy lines in template fsf to make subject-specific temp fsf file
 		sed -e 's:XXOUTPUTXX:'$out':g' -e 's:XXTRXX:'$TR':g' -e 's:XXVOLSXX:'$vols':g' -e 's:XX4DDATAXX:'$filtdata':g' -e 's:XXCONFXX:'$conf':g'<~/GitHub/rl_flexibility/conf_reg_design.fsf>tmp.fsf
