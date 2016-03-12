@@ -4,7 +4,7 @@
 ####Note: 4D image must have previously been registered to standard space
 ####images should be in .nii.gz format, but this can be easily changed
 
-4d_data=$1
+fourd_data=$1
 rois=$2
 
 if [ -z $2 ];
@@ -13,11 +13,11 @@ if [ -z $2 ];
 	echo Example:
 	echo ~/GitHub/rl_flexibility/extract_ROIs.sh res4d.nii.gz ~/Harvard-Oxford_ROIs/
 else
-	if [ -e $3 ]
+	if [ ! -z $3 ]
 		then
 		ts_dir=$3
 	else
-		ts_dir=$(dirname $4d_data)/$(basename $rois)
+		ts_dir=$(dirname $fourd_data)/$(basename $rois)
 	fi
 
 	if [ -d $ts_dir ]
@@ -27,7 +27,7 @@ else
 		mkdir $ts_dir
 		for r in $rois/*nii.gz
 		do
-			fslmeants -i $4d_data -o $ts_dir/$(basename $r .nii.gz).txt -m $r --eig
+			fslmeants -i $fourd_data -o $ts_dir/$(basename $r .nii.gz).txt -m $r --eig
 		done
 		paste $ts_dir/*txt
 	fi
