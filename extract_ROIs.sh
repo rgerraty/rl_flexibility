@@ -13,12 +13,22 @@ if [ -z $2 ];
 	echo Example:
 	echo ~/GitHub/rl_flexibility/extract_ROIs.sh res4d.nii.gz ~/Harvard-Oxford_ROIs/
 else
-	ts_dir=$(dirname $4d_data)/$(basename $rois)
-	mkdir $ts_dir
-	for r in $rois/*nii.gz
+	if [ -e $3 ]
+		then
+		ts_dir=$3
+	else
+		ts_dir=$(dirname $4d_data)/$(basename $rois)
+	fi
+
+	if [ -d $ts_dir ]
+		then
+		echo $ts_dir already exists!
+	else
+		mkdir $ts_dir
+		for r in $rois/*nii.gz
 		do
 			fslmeants -i $4d_data -o $ts_dir/$(basename $r .nii.gz).txt -m $r --eig
-	done
-	past 
-
+		done
+		paste $ts_dir/*txt
+	fi
 fi
