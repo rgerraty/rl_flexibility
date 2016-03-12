@@ -29,6 +29,6 @@ else
 		do
 			fslmeants -i $fourd_data -o $ts_dir/$(basename $r .nii.gz).txt -m $r --eig
 		done
-		paste $ts_dir/*txt>$tsdir/all_rois.txt
+		paste $ts_dir/*txt>$ts_dir/all_rois.txt
 	fi
 fi
