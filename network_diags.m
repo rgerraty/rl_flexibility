@@ -8,8 +8,10 @@ function [a_mat,flex,S_tmp,Q_tmp]=network_diags(conn_cells,blocks,sim,omega,res)
 
 for i=1:sim
 	[S_tmp(:,:,i), Q_tmp(i)]=multiord_res_norm(conn_cells,omega, res);
+	k=1
 	for b=1:blocks
-		flex_tmp(:,b,i)=flexibility(S_tmp(:,:,i)');
+		flex_tmp(:,b,i)=flexibility(:,S_tmp(k:b*size(S_tmp,2)/blocks,i)');
+		k=(b*size(S_tmp,1)/blocks)+1
 	end
 end;
 flex=mean(flex_tmp,3);
