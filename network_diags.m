@@ -10,7 +10,7 @@ for i=1:sim
 	[S_tmp(:,:,i), Q_tmp(i)]=multiord_res_norm(conn_cells,omega, res);
 	k=1
 	for b=1:blocks
-		flex_tmp(:,b,i)=flexibility(:,S_tmp(k:b*size(S_tmp,2)/blocks,i)');
+		flex_tmp(:,b,i)=flexibility(S_tmp(:,k:b*size(S_tmp,2)/blocks,i)');
 		k=(b*size(S_tmp,1)/blocks)+1
 	end
 end;
