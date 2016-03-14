@@ -1,10 +1,12 @@
-function [a_mat,flex,S_tmp,Q_tmp]=network_diags(conn_cells,sim,omega,res)
+function [a_mat,flex,S_tmp,Q_tmp]=network_diags(conn_cells,blocks,sim,omega,res)
 
 for i=1:sim
 	[S_tmp(:,:,i), Q_tmp(i)]=multiord_res_norm(conn_cells,omega, res);
-	flex_tmp(:,i)=flexibility(S_tmp(:,:,i)');
+	for b=1:blocks
+		flex_tmp(:,b,i)=flexibility(S_tmp(:,:,i)');
+	end
 end;
-flex=mean(flex_tmp,2);
+flex=mean(flex_tmp,3);
 
 for h=1:size(conn_cells,3)
 	for i=1:sim
