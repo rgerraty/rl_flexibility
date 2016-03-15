@@ -3,14 +3,16 @@
 
 Example scripts for running network preprocessing and analysis functions contained here. See paper for details when it comes out.
 
+
+
 ### Preprocessing
 
 Need to add
 
-### Running nonlinear registration with FNIRT
 
-Run this after confound regression. Make sure fsl\_anat has been run on
-each structural image first. Bash script.
+
+### Running nonlinear registration with FNIRT
+After nuisance regression has been run, the residual timeseries needs to be transformed into standard space (in this case, MNI). Make sure fsl\_anat has been run on each structural image first. The following bash code was used to perform these transformations:
 
 ``` {.bash}
 #fnirt has already been run, just applying transformation
@@ -18,7 +20,9 @@ for i in /data/engine/rgerraty/learn_dyncon/4*/Learn*;
     do 
     #run linear registration on example functional image
     flirt -ref $i/../structural/mprage.anat/T1_biascorr_brain.nii.gz\
-     -in $i/reg/example_func.nii.gz -omat $i/reg/example_func2highres.mat;
+     -in $i/reg/example_func.nii.gz\
+     -omat $i/reg/example_func2highres.mat;
+
      echo warping $i;
 
     #apply warp from FNIRT to preprocessed 4D data
@@ -30,25 +34,26 @@ for i in /data/engine/rgerraty/learn_dyncon/4*/Learn*;
 done
 ```
 
-### Extracting time courses
 
-Input a folder of ROIs and preprocessed 4D data. Bash script.
+
+### Extracting time courses
+Once the preprocessed images have been registered, we extract summary timecourses (using the 1st eigenvector) for each Harvard-Oxford ROI, using the function extract_ROIs.sh. The output of this function is a timecourse for each ROI in the specified input folder, as well as a .txt file containing all of the ROIs. The bash code used to run this function on each learning block for each subject is below:
 
 ``` {.bash}
 for i in /data/engine/rgerraty/learn_dyncon/4*/Learn?_PEprior.feat/36par+spikes.feat/; 
     do 
-
-    #extract timeseries data from each ROI in ~/Harvard-Oxford_ROIs/ 
-    bash ~/GitHub/rl_flexibility/extract_ROIs.sh $i/stats/res4d_std.nii.gz ~/Harvard-Oxford_ROIs/ H-O_rois/;
+    #extract timeseries (1st eigenvector) data from each ROI in ~/Harvard-Oxford_ROIs/ 
+    ~/GitHub/rl_flexibility/extract_ROIs.sh $i/stats/res4d_std.nii.gz ~/Harvard-Oxford_ROIs/ H-O_rois/;
 done
 ```
 
+
+
 ### Calculate coherence matrices for each time window
 
-In MATLAB. Input ROI timecourses for each block, number of windows per
-block in TRs, and minimum/maximum frequency in Hz.
 
-``` {.octave}
+
+``` {.matlab}
 addpath ~/GitHub/rl_flexibility
 %read in all subject/run ROI timeseries directories 
 [a,b]=system('ls -d /data/engine/rgerraty/learn_dyncon/4*/Learn?_PEprior.feat/36par+spikes.feat/H-O_rois');
@@ -65,13 +70,16 @@ for i=1:size(c,1)
 end
 ```
 
+
+
+
 ### Run multi-slice community detection and flexibility statistics
 
 Input coherence matrix for each block. Also need number of blocks,
 resolution and coupling parameters. In Matlab
 
-``` {.octave}
-%%%%%%pretty hacky, remember to fix
+``` {.matlab}
+%need multi-slice, flexibility codes not yet on GitHub for network_diags to run 
 addpath ~/GitHub/rl_flexibility
 addpath ~/scripts/MATLAB/GenLouvain_for_Raphael/
 addpath ~/scripts/MATLAB/Bassett_Code/
@@ -103,12 +111,15 @@ for j=1:size(c,1)/numruns
 end
 ```
 
+
+
 ### Pull flexibility statistics
 
-For plotting and analysis. Matlab.
+For plotting and preparing for heirarchical models. Matlab.
 
-``` {.octave}
-%still working on this
+``` {.matlab}
+
+%load data and concatenate flexibility statistics
 [a,b]=system('ls -d /data/engine/rgerraty/learn_dyncon/4*/flex.mat');
 c=strread(b,'%s');
 flex_cat=[];
@@ -116,5 +127,34 @@ for j=1:size(c,1)
     load(char(c(j)))
     flex_cat=cat(3,flex_cat,flex)
 end
-plot(squeeze(mean(flex_cat))) 
+plot(squeeze(mean(flex_cat)))
+
+block=repmat([1:4]',22,1);
+sub=repmat([1:22]',1,4)'
+sub=sub(:);
+
+%reshape whole-brain average flexibility
+meanflex=squeeze(mean(flex_cat));
+meanflex=meanflex(:);
+
+%get striatal average flexibility
+str_ind=[49,51,54,104,106,109];
+strflex=squeeze(mean(flex_cat(str_ind,:,:)));
+strflex=strflex(:);
+
+plot(squeeze(mean(flex_cat(str_ind,:,:))))
+
+%write out csv for modeling in R
+flexdata=[sub block meanflex strflex]
+dlmwrite('/data/engine/rgerraty/learn_dyncon/flexdata.csv',flexdata) 
+
+```
+
+
+```{.r}
+data<-read.delim('~/DynLearn/mem_lrn_mixmod.txt',header=1)
+flexdat<-read.delim('/data/engine/rgerraty/learn_dyncon/flexdata.csv',header=F)
+names(flexdat)<-c('subject,'block','wb_flex','str_flex')
+
+
 ```
