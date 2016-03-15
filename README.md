@@ -3,6 +3,8 @@ Example Code for Network Preprocessing and Analysis
 
 Network Flexibility and Reinforcement Learning
 ----------------------------------------------
+Raphael Gerraty 2015-2016
+
 
 See paper for details when it comes out
 
