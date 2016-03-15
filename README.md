@@ -1,6 +1,6 @@
-%Network Flexibility and Reinforcement Learning
-%Raphael Gerraty 
-%2015-2016
+#Network Flexibility and Reinforcement Learning
+##Raphael Gerraty 
+###2015-2016
 
 
 Example scripts for running network preprocessing and analysis functions contained here. See paper for details when it comes out.
