@@ -84,7 +84,7 @@ for j=1:size(c,1)/numruns
 end
 ```
 
-### Pull flexibility scores
+### Pull flexibility statistics
 
 For plotting and analysis. Matlab.
 
