@@ -6,6 +6,7 @@
 
 fourd_data=$1
 rois=$2
+eig=$4
 
 if [ -z $2 ];
 	then
@@ -27,7 +28,7 @@ else
 		mkdir $ts_dir
 		for r in $rois/*nii.gz
 		do
-			fslmeants -i $fourd_data -o $ts_dir/$(basename $r .nii.gz).txt -m $r 
+			fslmeants -i $fourd_data -o $ts_dir/$(basename $r .nii.gz).txt -m $r $eig
 		done
 		paste $ts_dir/*txt>$ts_dir/all_rois.txt
 	fi
