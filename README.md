@@ -42,8 +42,8 @@ Once the preprocessed images have been registered, we extract summary timecourse
 ``` {.bash}
 for i in /data/engine/rgerraty/learn_dyncon/4*/Learn?_PEprior.feat/36par+spikes.feat/; 
     do 
-    #extract timeseries (1st eigenvector) data from each ROI in ~/Harvard-Oxford_ROIs/ 
-    ~/GitHub/rl_flexibility/extract_ROIs.sh $i/stats/res4d_std.nii.gz ~/Harvard-Oxford_ROIs/ H-O_rois/;
+    #extract timeseries (mean or 1st eigenvector, see function) data from each ROI in ~/Harvard-Oxford_ROIs/ 
+    ~/GitHub/rl_flexibility/extract_ROIs.sh $i/stats/res4d_std.nii.gz ~/Harvard-Oxford_ROIs/ $i/H-O_rois/;
 done
 ```
 
