@@ -151,10 +151,3 @@ dlmwrite('/data/engine/rgerraty/learn_dyncon/flexdata.csv',flexdata)
 ```
 
 
-```{.r}
-data<-read.delim('~/DynLearn/mem_lrn_mixmod.txt',header=1)
-flexdat<-read.delim('/data/engine/rgerraty/learn_dyncon/flexdata.csv',header=F)
-names(flexdat)<-c('subject,'block','wb_flex','str_flex')
-
-
-```
