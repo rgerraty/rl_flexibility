@@ -27,7 +27,7 @@ else
 		mkdir $ts_dir
 		for r in $rois/*nii.gz
 		do
-			fslmeants -i $fourd_data -o $ts_dir/$(basename $r .nii.gz).txt -m $r --eig
+			fslmeants -i $fourd_data -o $ts_dir/$(basename $r .nii.gz).txt -m $r 
 		done
 		paste $ts_dir/*txt>$ts_dir/all_rois.txt
 	fi
