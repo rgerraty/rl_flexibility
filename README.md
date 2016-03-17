@@ -53,7 +53,7 @@ done
 
 
 ### Extracting time courses
-Once the preprocessed images have been registered, we extract summary timecourses (using the 1st eigenvector) for each Harvard-Oxford ROI, using the function extract_ROIs.sh. The output of this function is a timecourse for each ROI in the specified input folder, as well as a .txt file containing all of the ROIs. The bash code used to run this function on each learning block for each subject is below:
+Once the preprocessed images have been registered, we extract mean timecourses for each Harvard-Oxford ROI, using the function extract_ROIs.sh. The output of this function is a timecourse for each ROI in the specified input folder, as well as a .txt file containing all of the ROIs. The bash code used to run this function on each learning block for each subject is below:
 
 ``` {.bash}
 for i in /data/engine/rgerraty/learn_dyncon/4*/Learn?_PEprior.feat/36par+spikes.feat/; 
@@ -66,7 +66,7 @@ done
 
 
 ### Calculate coherence matrices for each time window
-
+Connectivity between pairs of ROIs was measured by average magnitude squared coherence in the .06-.12 Hz band. The code below calls a function for creating a coherence matrices in a specified frequency range for specified time windows (in this case 25 TRs, or 50 s). These are saved as a .mat file for multi-slice community detection. 
 
 
 ``` {.matlab}
