@@ -1,13 +1,29 @@
 #Network Flexibility and Reinforcement Learning
 ##Raphael Gerraty, 2015-2016
 
-Example scripts for running network preprocessing and analysis functions contained here. See paper for details when it comes out.
+Descriptions and example scripts for running network preprocessing and analysis functions contained in this repository. See paper for details when it comes out.
 
 
 
-### Preprocessing
+### Extended Preprocessing
+Because of the known effect of motion on measures of connectivity, we followed up standard preprocessing in FSL with an extended nuisance regression. Affine transformation parameters from motion correction, CSF, white matter, and whole-brain signals are regressed against preprocessed 4D data, along with the squares, derivatives, and squared derivatives of these confounds. See Satterthwaite et al 2013 for details. 
 
-Need to add
+``{.bash}
+for i in /data/engine/rgerraty/learn_dyncon/4*/Learn*/filtered_func_data.nii.gz
+  do
+  subdir=$(dirname $i)
+
+  #extract confound timecourses from preprocessed data
+  #need to provide feat directory as well as anatomical directory
+  #can also provide z-score cut-off for high-motion timepoints (spikes)
+  ~/GitHub/rl_flexibility/fsl_extract_confts.sh $subdir\
+   $subdir/../structural/mprage.anat 3
+
+  #run 1st level confound regression, using template .fsf and confound files
+  ~/GitHub/rl_flexibility/1st_level_conf.sh $i $subdir/36par+spikes.txt
+done
+```
+
 
 
 
