@@ -8,7 +8,7 @@ Descriptions and example scripts for running network preprocessing and analysis 
 ### Extended Preprocessing
 Because of the known effect of motion on measures of connectivity, we followed up standard preprocessing in FSL with an extended nuisance regression. Affine transformation parameters from motion correction, CSF, white matter, and whole-brain signals are regressed against preprocessed 4D data, along with the squares, derivatives, and squared derivatives of these confounds. See Satterthwaite et al 2013 for details. 
 
-``{.bash}
+```{.bash}
 for i in /data/engine/rgerraty/learn_dyncon/4*/Learn*/filtered_func_data.nii.gz
   do
   subdir=$(dirname $i)
