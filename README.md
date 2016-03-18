@@ -179,7 +179,7 @@ end
 dlmwrite('/data/engine/rgerraty/learn_dyncon/flex_allrois.csv',flex_allrois) 
 ```
 
-REML and fully Bayesian models for the effect of striatal and whole-brain flexibility on reinforcement learning 
+###REML and fully Bayesian models for the effect of striatal and whole-brain flexibility on reinforcement learning 
 
 ```{.r}
 library(reshape2)
@@ -221,7 +221,7 @@ mlearn_stan<-brm(correct~str_flex+(str_flex|subject),data=flex_behav,family=bino
 ```
 
 
-Whole-brain search for effects of flexibility on learning
+###Whole-brain search for effects of flexibility on learning
 
 
 ```{.r}
