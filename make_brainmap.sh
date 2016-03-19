@@ -1,6 +1,7 @@
 val_ind=$1
 region_list=$2
 val_list=$3
+p=$4
 
 if [ -z $3 ];
 then
@@ -18,7 +19,7 @@ for i in $(cat $val_ind);
 	val=$(cat $val_list | awk -v val=$i 'FNR==val { print;exit }');
 	echo $region $val
 
-	if [ "$4" == "p" ];
+	if [ "$p" == "p" ];
 	then
 		val=$(echo 1 - $val | bc -l) 
 	fi
@@ -32,7 +33,7 @@ for i in $(cat $val_ind);
 	fi
 	k=$(($k+1))
 done
-rm -rf roi_tmp.sh
+rm -rf roi_tmp.nii.gz
 fi
 	
 
