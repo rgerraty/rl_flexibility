@@ -21,6 +21,7 @@ for i in $(cat $val_ind);
 
 	if [ "$p" == "p" ];
 	then
+		val="$(sed 's/[eE]+\{0,1\}/*10^/g' <<<"$val")"
 		val=$(echo 1 - $val | bc -l) 
 	fi
 
