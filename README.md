@@ -215,7 +215,7 @@ mlearn_glmer<-glmer(correct~str_flex+(str_flex||subject),data=flex_behav,family=
 
 #for posterior inference, run bayesian model using brms wrapper for stan
 flex_behav$numcorr<-flex_behav$correct*flex_behav$weights
-mlearn_stan<-brm(correct~str_flex+(str_flex|subject),data=flex_behav,family=binomial)
+mlearn_stan<-brm(numcorr~str_flex+(str_flex|subject),data=flex_behav,family=binomial)
 
 
 ```
