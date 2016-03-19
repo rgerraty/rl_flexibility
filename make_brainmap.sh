@@ -27,7 +27,7 @@ for i in $(cat $val_ind);
 	fi
 	k=$(($k+1))
 done
-rm -rf roi_tmp.sh
+rm -rf roi_tmp.nii.gz
 fi
 	
 
