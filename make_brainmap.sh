@@ -18,6 +18,11 @@ for i in $(cat $val_ind);
 	val=$(cat $val_list | awk -v val=$i 'FNR==val { print;exit }');
 	echo $region $val
 
+	if [ "$4" == "p" ];
+	then
+		val=$(echo 1 - $val | bc -l) 
+	fi
+
 	if [ $k -eq 1  ];
 	then
 		fslmaths $region -mul $val $(basename $val_ind .txt)
@@ -27,7 +32,7 @@ for i in $(cat $val_ind);
 	fi
 	k=$(($k+1))
 done
-rm -rf roi_tmp.nii.gz
+rm -rf roi_tmp.sh
 fi
 	
 
