@@ -214,7 +214,7 @@ write.csv(flex_behav,'/data/engine/rgerraty/learn_dyncon/flex_behav.csv')
 mlearn_glmer<-glmer(correct~str_flex+(str_flex||subject),data=flex_behav,family=binomial,weights=flex_behav$weights)
 
 #for posterior inference, run bayesian model using brms wrapper for stan
-flex_behav$numcorr<-flex_behav$correct*flex_behav$weights
+flex_behav$numcorr<-as.integer(flex_behav$correct*flex_behav$weights)
 mlearn_stan<-brm(numcorr~str_flex+(str_flex|subject),data=flex_behav,family=binomial)
 
 
