@@ -179,12 +179,11 @@ end
 dlmwrite('/data/engine/rgerraty/learn_dyncon/flex_allrois.csv',flex_allrois) 
 ```
 
-###REML and fully Bayesian models for the effect of striatal and whole-brain flexibility on reinforcement learning 
+###REML and fully Bayesian hierarchical models for the effect of striatal and whole-brain flexibility on reinforcement learning 
 
 ```{.r}
 library(reshape2)
 library(lme4)
-library(rstanarm)
 library(brms)
 
 #prepare data for binomial logistic modelling
@@ -214,6 +213,7 @@ write.csv(flex_behav,'/data/engine/rgerraty/learn_dyncon/flex_behav.csv')
 mlearn_glmer<-glmer(correct~str_flex+(str_flex||subject),data=flex_behav,family=binomial,weights=flex_behav$weights)
 
 #for posterior inference, run bayesian model using brms wrapper for stan
+options(mc.cores = parallel::detectCores())
 flex_behav$numcorr<-as.integer(flex_behav$correct*flex_behav$weights)
 mlearn_stan<-brm(numcorr~str_flex+(str_flex|subject),data=flex_behav,family=binomial)
 
