@@ -24,11 +24,12 @@ rl_data<-read.csv('~/Documents/alphabeta.csv',header=0)
 ##Behavioral Learning Model
 We ran a generalized mixed effects logit model predicting proportion correct with block. Subjects demonstrated significant learning across the task.  
 
-```{r, echo=TRUE, warning=FALSE,message=FALSE}
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
 
 flex_behav$block_int<-as.numeric(flex_behav$block)-2.5
 
-mbehav<-glmer(correct~block_int+(block_int|subject),data=flex_behav,weights=weights,family=binomial)
+mbehav<-glmer(correct~block_int+(block_int|subject),
+              data=flex_behav,weights=weights,family=binomial)
 
 summary(mbehav)
 ```
@@ -37,7 +38,7 @@ summary(mbehav)
 ###Striatal flexibility- REML
 We fit a mixed effects generalized linear model using a REML approximation to associate individual learning performance with striatal flexibility across blocks, using lme4.
 
-```{r, echo=TRUE, warning=FALSE,messages=FALSE}
+```{r, echo=FALSE, warning=FALSE,messages=FALSE}
 mlearn_str<-glmer(correct~str_flex+(str_flex || subject),data=flex_behav,weights=weights,family=binomial)
 
 summary(mlearn_str)
@@ -51,11 +52,12 @@ summary(mlearn_str_mean)
 ###Striatal flexibility- Bayesian model
 For appropriate posterior inference, we fit the same model using Hamiltonian Monte Carlo to generate a full posterior distribution for the effect of striatal flexibility on learning performance. 
 
-```{r, echo=TRUE, warning=FALSE,message=FALSE}
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
 options(mc.cores = parallel::detectCores())
 flex_behav$numcorr<-as.integer(flex_behav$correct*flex_behav$weights)
 
-mlearn_str_stan<-brm(numcorr~str_flex+(str_flex|subject),data=flex_behav,family=binomial)
+mlearn_str_stan<-brm(numcorr~str_flex+(str_flex|subject),
+                     data=flex_behav,family=binomial)
 
 summary(mlearn_str_stan)
 
@@ -65,7 +67,7 @@ plot(mlearn_str_stan)
 ###Whole-brain flexibility
 Because a global measure of flexibility has also been shown to relate to a number of cogitive processes (Bassett et al 2011, Braun et al 2015), we fit another mixed-effects model with this whole-brain metric as a predictor. 
 
-```{r, echo=TRUE, warning=FALSE,message=FALSE}
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
 mlearn_wb<-glmer(correct~wb_flex+(wb_flex || subject),data=flex_behav,weights=weights,family=binomial)
 
 summary(mlearn_wb)
