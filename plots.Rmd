@@ -76,7 +76,7 @@ p+geom_line(aes(color=as.factor(subject)),alpha=.7)+
 ```
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-#whole-brain
+#striatum
 p2<-ggplot(data=flex_behav,aes(block,str_flex))
 stat_sum_single <- function(fun, geom="point",color="black", ...) {
 stat_summary(fun.y=fun, colour=color, geom=geom, size = 2, ...)
@@ -110,7 +110,7 @@ predict.data$fixed=1/(1+exp(-predict.data$fixed.logit))
 
 ####plot FE plus CI using sjPlot
 a<-sjp.glmer(mlearn_glmer_big,type="fe.pc",show.ci=1,printPlot = FALSE)
-gplot<-a$plot.mp[[1]]+theme_bw()+theme(legend.position="none")+
+gplot<-a$plot.mp[[1]]+theme_classic()+theme(legend.position="none")+
 #ggtitle("Effect of Flexibility on Learning")+
 ylab("Proportion of Correct Response")+
 xlab("Striatum Flexibility")+coord_cartesian(ylim = c(0.3, 1))+
@@ -138,7 +138,7 @@ predict.data2$fixed=1/(1+exp(-predict.data2$fixed.logit))
 
 ####plot FE plus CI using sjPlot
 a2<-sjp.glmer(mlearn_glmer_big_wb,type="fe.pc",show.ci=1,printPlot = FALSE)
-gplot2<-a2$plot.mp[[1]]+theme_bw()+theme(legend.position="none")+
+gplot2<-a2$plot.mp[[1]]+theme_classic()+theme(legend.position="none")+
   #ggtitle("Effect of Flexibility on Learning")+
   ylab("Proportion of Correct Response")+
   xlab("Whole-Brain Flexibility")+coord_cartesian(ylim = c(0.3, 1))+
