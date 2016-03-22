@@ -24,7 +24,7 @@ rl_data<-read.csv('~/Documents/alphabeta.csv',header=0)
 names(rl_data)<-c("alpha","beta")
 ```
 
-
+##Figure 2a. 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 #Learning
 se<-function(x) (sd(x, na.rm=T)/sqrt(length(x)))
@@ -43,21 +43,7 @@ ggplot(flex_behav,aes(x=block,y=correct))+
 
 ```
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-ggplot(mem_data,aes(x=block,y=correct))+
-  stat_sum_single(mean,geom="line")+
-  stat_summary(fun.ymin=lose,fun.ymax=hise,geom="errorbar",
-               position=position_dodge(.9),color = 'black', size=.5, width=0.2)  +
-  theme_classic()+
-  theme(legend.position="none",
-        axis.title = element_text(size = 18),
-        axis.text = element_text(size = 14))+
-  xlab("Learning Block")+
-  ylab("Proportion of Subsequent Memory")
-
-```
-
-
+##Figure 2c.
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 ##Plote flexibility over time
 #whole-brain
@@ -75,24 +61,7 @@ p+geom_line(aes(color=as.factor(subject)),alpha=.7)+
 
 ```
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-#striatum
-p2<-ggplot(data=flex_behav,aes(block,str_flex))
-stat_sum_single <- function(fun, geom="point",color="black", ...) {
-stat_summary(fun.y=fun, colour=color, geom=geom, size = 2, ...)
-}
-p2+geom_line(aes(color=as.factor(subject)),alpha=.7)+
-  stat_sum_single(mean,geom="line")+
-  theme_classic()+
-  theme(legend.position="none",
-        axis.title = element_text(size = 18),
-        axis.text = element_text(size = 14))+
-  xlab("Learning Block")+
-  ylab("Striatal Flexibility")
-
-```
-
-
+##Figure 3a
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 mlearn_glmer<-glmer(correct~str_flex_dm+(str_flex_dm||subject),data=flex_behav,family=binomial("logit"),weights=weights)
 
@@ -121,6 +90,58 @@ gplot+geom_line(aes(x=predict.data$str_flex, y=predict.data$response,group=flex_
 geom_line(aes(x=predict.data$str_flex, y=predict.data$fixed, group=1), color='black', size=1.25)+
 theme(axis.title=element_text(size=20,face="bold"))+theme(axis.text=element_text(size=18))
 
+
+```
+
+
+##Figure 4
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+###Reinforcement learning parameter flexibility correlation
+rl_flex<-as.data.frame(cbind(tapply(flex_behav$wb_flex,flex_behav$subject,mean),                        tapply(flex_behav$str_flex,flex_behav$subject,mean),rl_data$alpha))
+names(rl_flex)<-c("wb_flex","str_flex","alpha")
+
+ggplot(data=rl_flex,aes(x=wb_flex,y=alpha))+theme_classic()+geom_point()+
+  ylab("Learning Rate")+
+  xlab("Whole-Brain Flexibility")+
+  theme(axis.title=element_text(size=20,face="bold"))+
+  theme(legend.position="none", axis.title = element_text(size = 18),
+        axis.text = element_text(size = 14))+
+  stat_smooth(method=lm)
+
+```
+
+
+##Figure 5a
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(mem_data,aes(x=block,y=correct))+
+  stat_sum_single(mean,geom="line")+
+  stat_summary(fun.ymin=lose,fun.ymax=hise,geom="errorbar",
+               position=position_dodge(.9),color = 'black', size=.5, width=0.2)  +
+  theme_classic()+
+  theme(legend.position="none",
+        axis.title = element_text(size = 18),
+        axis.text = element_text(size = 14))+
+  xlab("Learning Block")+
+  ylab("Proportion of Subsequent Memory")
+
+```
+
+
+##Supplementary Figures
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+#striatum
+p2<-ggplot(data=flex_behav,aes(block,str_flex))
+stat_sum_single <- function(fun, geom="point",color="black", ...) {
+stat_summary(fun.y=fun, colour=color, geom=geom, size = 2, ...)
+}
+p2+geom_line(aes(color=as.factor(subject)),alpha=.7)+
+  stat_sum_single(mean,geom="line")+
+  theme_classic()+
+  theme(legend.position="none",
+        axis.title = element_text(size = 18),
+        axis.text = element_text(size = 14))+
+  xlab("Learning Block")+
+  ylab("Striatal Flexibility")
 
 ```
 
@@ -153,22 +174,17 @@ gplot2+geom_line(aes(x=predict.data2$wb_flex, y=predict.data2$response,group=fle
 
 ```
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-###Reinforcement learning parameter flexibility correlation
-rl_flex<-as.data.frame(cbind(tapply(flex_behav$wb_flex,flex_behav$subject,mean),
-                             tapply(flex_behav$str_flex,flex_behav$subject,mean),rl_data$alpha))
-names(rl_flex)<-c("wb_flex","str_flex","alpha")
-rl_flex$alpha_rank<-rank(rl_data$alpha)
 
-ggplot(data=rl_flex,aes(x=wb_flex,y=alpha))+theme_classic()+geom_point()+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(data=rl_flex,aes(x=str_flex,y=alpha))+theme_classic()+geom_point()+
   ylab("Learning Rate")+
-  xlab("Whole-Brain Flexibility")+
+  xlab("Striatal Flexibility")+
   theme(axis.title=element_text(size=20,face="bold"))+
   theme(legend.position="none", axis.title = element_text(size = 18),
         axis.text = element_text(size = 14))+
   stat_smooth(method=lm)
-
-
-
 ```
+
+
+
 
