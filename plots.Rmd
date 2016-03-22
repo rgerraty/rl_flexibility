@@ -1,7 +1,7 @@
 ---
-title: "Striatal network dynamics are associated with reinforcement learning"
+title: "Network dynamics are associated with reinforcement learning"
 author: "Raphael Gerraty"
-subtitle: "Figures"
+subtitle: Figures
 output: pdf_document
 ---
 
@@ -36,10 +36,10 @@ ggplot(flex_behav,aes(x=block,y=correct))+
                position=position_dodge(.9),color = 'black', size=.5, width=0.2)  +
   theme_classic()+
   theme(legend.position="none",
-        axis.title = element_text(size = 18),
-        axis.text = element_text(size = 14))+
+        axis.title = element_text(size = 22),
+        axis.text = element_text(size = 18))+
   xlab("Learning Block")+
-  ylab("Proportion of Correct Response")
+  ylab("Proportion Correct")
 
 ```
 
@@ -49,12 +49,12 @@ ggplot(flex_behav,aes(x=block,y=correct))+
 #whole-brain
 p<-ggplot(data=flex_behav,aes(block,wb_flex))
 
-p+geom_line(aes(color=as.factor(subject)),alpha=.7)+
+p+geom_line(aes(color=as.factor(subject)),alpha=.9)+
   stat_sum_single(mean,geom="line")+
   theme_classic()+
   theme(legend.position="none",
-        axis.title = element_text(size = 18),
-        axis.text = element_text(size = 14))+
+        axis.title = element_text(size = 22),
+        axis.text = element_text(size = 18))+
   xlab("Learning Block")+
   ylab("Whole-Brain Flexibility")
 
@@ -81,14 +81,14 @@ predict.data$fixed=1/(1+exp(-predict.data$fixed.logit))
 a<-sjp.glmer(mlearn_glmer_big,type="fe.pc",show.ci=1,printPlot = FALSE)
 gplot<-a$plot.mp[[1]]+theme_classic()+theme(legend.position="none")+
 #ggtitle("Effect of Flexibility on Learning")+
-ylab("Proportion of Correct Response")+
+ylab("Proportion Correct")+
 xlab("Striatum Flexibility")+coord_cartesian(ylim = c(0.3, 1))+
-theme(axis.title=element_text(size=20,face="bold"))
+theme(axis.title=element_text(size=22))
 
 #add random effects lines (plus increase FE line)
 gplot+geom_line(aes(x=predict.data$str_flex, y=predict.data$response,group=flex_behav_big$subject,colour=as.factor(flex_behav_big$subject)), alpha = .9,size=1)+
 geom_line(aes(x=predict.data$str_flex, y=predict.data$fixed, group=1), color='black', size=1.25)+
-theme(axis.title=element_text(size=20,face="bold"))+theme(axis.text=element_text(size=18))
+theme(axis.title=element_text(size=22))+theme(axis.text=element_text(size=18))
 
 
 ```
@@ -103,9 +103,9 @@ names(rl_flex)<-c("wb_flex","str_flex","alpha")
 ggplot(data=rl_flex,aes(x=wb_flex,y=alpha))+theme_classic()+geom_point()+
   ylab("Learning Rate")+
   xlab("Whole-Brain Flexibility")+
-  theme(axis.title=element_text(size=20,face="bold"))+
-  theme(legend.position="none", axis.title = element_text(size = 18),
-        axis.text = element_text(size = 14))+
+  theme(axis.title=element_text(size=22))+
+  theme(legend.position="none",
+        axis.text = element_text(size = 18))+
   stat_smooth(method=lm)
 
 ```
@@ -119,10 +119,10 @@ ggplot(mem_data,aes(x=block,y=correct))+
                position=position_dodge(.9),color = 'black', size=.5, width=0.2)  +
   theme_classic()+
   theme(legend.position="none",
-        axis.title = element_text(size = 18),
-        axis.text = element_text(size = 14))+
+        axis.title = element_text(size = 22),
+        axis.text = element_text(size = 18))+
   xlab("Learning Block")+
-  ylab("Proportion of Subsequent Memory")
+  ylab("Proportion Remembered")
 
 ```
 
@@ -131,15 +131,12 @@ ggplot(mem_data,aes(x=block,y=correct))+
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 #striatum
 p2<-ggplot(data=flex_behav,aes(block,str_flex))
-stat_sum_single <- function(fun, geom="point",color="black", ...) {
-stat_summary(fun.y=fun, colour=color, geom=geom, size = 2, ...)
-}
-p2+geom_line(aes(color=as.factor(subject)),alpha=.7)+
+p2+geom_line(aes(color=as.factor(subject)),alpha=.9)+
   stat_sum_single(mean,geom="line")+
   theme_classic()+
   theme(legend.position="none",
-        axis.title = element_text(size = 18),
-        axis.text = element_text(size = 14))+
+        axis.title = element_text(size = 22),
+        axis.text = element_text(size = 18))+
   xlab("Learning Block")+
   ylab("Striatal Flexibility")
 
@@ -161,14 +158,14 @@ predict.data2$fixed=1/(1+exp(-predict.data2$fixed.logit))
 a2<-sjp.glmer(mlearn_glmer_big_wb,type="fe.pc",show.ci=1,printPlot = FALSE)
 gplot2<-a2$plot.mp[[1]]+theme_classic()+theme(legend.position="none")+
   #ggtitle("Effect of Flexibility on Learning")+
-  ylab("Proportion of Correct Response")+
+  ylab("Proportion of Correct")+
   xlab("Whole-Brain Flexibility")+coord_cartesian(ylim = c(0.3, 1))+
-  theme(axis.title=element_text(size=20,face="bold"))
+  theme(axis.title=element_text(size=22))
 
 #add random effects lines (plus increase FE line)
 gplot2+geom_line(aes(x=predict.data2$wb_flex, y=predict.data2$response,group=flex_behav_big$subject,colour=as.factor(flex_behav_big$subject)), alpha = .9,size=1)+
   geom_line(aes(x=predict.data2$wb_flex, y=predict.data2$fixed, group=1), color='black', size=1.25)+
-  theme(axis.title=element_text(size=20,face="bold"))+theme(axis.text=element_text(size=18))
+  theme(axis.title=element_text(size=22))+theme(axis.text=element_text(size=18))
 
 
 
@@ -179,9 +176,9 @@ gplot2+geom_line(aes(x=predict.data2$wb_flex, y=predict.data2$response,group=fle
 ggplot(data=rl_flex,aes(x=str_flex,y=alpha))+theme_classic()+geom_point()+
   ylab("Learning Rate")+
   xlab("Striatal Flexibility")+
-  theme(axis.title=element_text(size=20,face="bold"))+
-  theme(legend.position="none", axis.title = element_text(size = 18),
-        axis.text = element_text(size = 14))+
+  theme(axis.title=element_text(size=22))+
+  theme(legend.position="none",
+        axis.text = element_text(size = 18))+
   stat_smooth(method=lm)
 ```
 
