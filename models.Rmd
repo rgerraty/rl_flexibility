@@ -1,7 +1,7 @@
 ---
 title: "Network Dynamics are Associated with Reinforcement Learning"
-subtitle: "Models"
 author: "Raphael Gerraty"
+subtitle: Models
 output: pdf_document
 ---
 
@@ -56,13 +56,40 @@ For appropriate posterior inference, we fit the same model using Hamiltonian Mon
 options(mc.cores = parallel::detectCores())
 flex_behav$numcorr<-as.integer(flex_behav$correct*flex_behav$weights)
 
-prior<-set_prior("normal(0,10)",class="b")
+prior<-c(set_prior("normal(0,10)",class="b"),set_prior("lkj_corr_cholesky(2)",class="L"))
+
 mlearn_str_stan<-brm(numcorr~str_flex+(str_flex|subject),
                      data=flex_behav,prior=prior,family=binomial)
 
-summary(mlearn_str_stan)
 
 plot(mlearn_str_stan)
+
+summary(mlearn_str_stan)
+
+
+```
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+newvary<-expand.grid(subject=1:22,str_flex=flex_behav$str_flex)
+
+fitvary<-cbind(newvary,fitted(mlearn_str_stan,newdata=newvary))
+
+names(fitvary)[5:6]<-c("lower","upper")
+
+p1<-ggplot(flex_behav,aes(x=str_flex,y=numcorr))+
+             geom_point(shape = 1)+
+  scale_x_continuous(breaks = c(.07,.1, .13))
+
+p2 <- p1 + facet_wrap(~subject, nrow = 4)
+
+
+ p2 + geom_line(data = fitvary, aes(y = Estimate),size=1)+
+   geom_line(data = fitvary, aes(y = lower), lty = 2) +
+   geom_line(data = fitvary, aes(y = upper), lty = 2)+
+     theme_classic()+  ylab("Number Correct")+
+  xlab("Striatal Flexibility")
+
 ```
 
 ###Whole-brain flexibility
