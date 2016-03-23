@@ -2,7 +2,7 @@
 title: "Network dynamics are associated with reinforcement learning"
 author: "Raphael Gerraty"
 subtitle: Figures
-output: pdf_document
+output: word_document
 ---
 
 
@@ -158,7 +158,7 @@ predict.data2$fixed=1/(1+exp(-predict.data2$fixed.logit))
 a2<-sjp.glmer(mlearn_glmer_big_wb,type="fe.pc",show.ci=1,printPlot = FALSE)
 gplot2<-a2$plot.mp[[1]]+theme_classic()+theme(legend.position="none")+
   #ggtitle("Effect of Flexibility on Learning")+
-  ylab("Proportion of Correct")+
+  ylab("Proportion Correct")+
   xlab("Whole-Brain Flexibility")+coord_cartesian(ylim = c(0.3, 1))+
   theme(axis.title=element_text(size=22))
 
