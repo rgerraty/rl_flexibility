@@ -1,5 +1,5 @@
 ---
-title: "Striatal Network Dynamics are Associated with Reinforcement Learning"
+title: "Network Dynamics are Associated with Reinforcement Learning"
 subtitle: "Models"
 author: "Raphael Gerraty"
 output: pdf_document
@@ -50,14 +50,15 @@ summary(mlearn_str_mean)
 
 
 ###Striatal flexibility- Bayesian model
-For appropriate posterior inference, we fit the same model using Hamiltonian Monte Carlo to generate a full posterior distribution for the effect of striatal flexibility on learning performance. 
+For appropriate posterior inference, we fit the same model using Hamiltonian Monte Carlo to generate a full posterior distribution for the effect of striatal flexibility on learning performance. We used the 'brms' package to build Stan models.
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
 options(mc.cores = parallel::detectCores())
 flex_behav$numcorr<-as.integer(flex_behav$correct*flex_behav$weights)
 
+prior<-set_prior("normal(0,10)",class="b")
 mlearn_str_stan<-brm(numcorr~str_flex+(str_flex|subject),
-                     data=flex_behav,family=binomial)
+                     data=flex_behav,prior=prior,family=binomial)
 
 summary(mlearn_str_stan)
 
