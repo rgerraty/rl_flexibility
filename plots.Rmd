@@ -2,7 +2,7 @@
 title: "Network dynamics are associated with reinforcement learning"
 author: "Raphael Gerraty"
 subtitle: Figures
-output: word_document
+output: pdf_document
 ---
 
 
@@ -16,6 +16,9 @@ stat_sum_single <- function(fun, geom="point",color="black", ...) {
   stat_summary(fun.y=fun, colour=color, geom=geom, size = 2, ...)
 }
 
+se<-function(x) (sd(x, na.rm=T)/sqrt(length(x)))
+lose<-function(x) mean(x) - (sd(x, na.rm=T)/sqrt(length(x)))
+hise<-function(x) mean(x) + (sd(x, na.rm=T)/sqrt(length(x)))
 
 flex_behav<-read.csv('~/Downloads/flex_behav.csv')
 mem_data<-read.csv('~/Downloads/mem_behav.csv')
@@ -27,9 +30,6 @@ names(rl_data)<-c("alpha","beta")
 ##Figure 2a. 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 #Learning
-se<-function(x) (sd(x, na.rm=T)/sqrt(length(x)))
-lose<-function(x) mean(x) - (sd(x, na.rm=T)/sqrt(length(x)))
-hise<-function(x) mean(x) + (sd(x, na.rm=T)/sqrt(length(x)))
 ggplot(flex_behav,aes(x=block,y=correct))+
   stat_sum_single(mean,geom="line")+
   stat_summary(fun.ymin=lose,fun.ymax=hise,geom="errorbar",
