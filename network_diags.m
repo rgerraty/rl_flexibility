@@ -1,13 +1,13 @@
-function [a_mat,flex,S_tmp,Q_tmp]=network_diags(conn_cells,blocks,sim,omega,res)
+function [a_mat,flex,S_tmp,Q_tmp]=network_diags(conn_cells,blocks,sim,gamma,res)
 
 %Flexibility paper numbers 
 %blocks=4
-%sim=100
+%sim=500
 %res=1.1813
-%omega=1
+%gamma=1
 
 for i=1:sim
-	[S_tmp(:,:,i), Q_tmp(i)]=multiord_res_norm(conn_cells,omega, res);
+	[S_tmp(:,:,i), Q_tmp(i)]=multiord_res_norm(conn_cells,gamma, res);
 	k=1
 	for b=1:blocks
 		flex_tmp(:,b,i)=flexibility(S_tmp(:,k:b*size(S_tmp,2)/blocks,i)');
