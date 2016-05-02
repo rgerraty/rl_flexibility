@@ -9,8 +9,10 @@ output: pdf_document
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(ggplot2)
 library(sjPlot)
+library(gridExtra)
 library(lme4)
 library(brms)
+
 
 stat_sum_single <- function(fun, geom="point",color="black", ...) {
   stat_summary(fun.y=fun, colour=color, geom=geom, size = 2, ...)
@@ -182,6 +184,28 @@ ggplot(data=rl_flex,aes(x=str_flex,y=alpha))+theme_classic()+geom_point()+
   stat_smooth(method=lm)
 ```
 
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+p1<-ggplot(flex_behav,aes(x=str_flex,y=correct))+
+             geom_point(shape = 1) +
+  scale_x_continuous(breaks = c(.07,.1, .13))
+p2 <- p1 + facet_wrap(~subject, nrow = 4)
+
+#grid.arrange(p1, p2, ncol = 2) 
+
+sims<-sim(mlearn_str,n.sims=1000)
+yhat <- fitted(sims, mlearn_str)
+
+flex_behav$lower <- apply(yhat, 1, quantile, prob=0.025)
+flex_behav$median <- apply(yhat, 1, quantile, prob=0.5)
+flex_behav$upper <- apply(yhat, 1, quantile, prob=0.975)
+p2 + geom_line(data = flex_behav, aes(y = median), size = 1) +
+    geom_line(data = flex_behav, aes(y = lower), lty = 2) +
+    geom_line(data = flex_behav, aes(y = upper), lty = 2) +
+  theme_classic()+  ylab("Proportion Correct")+
+  xlab("Striatal Flexibility")
+```
 
 
 
