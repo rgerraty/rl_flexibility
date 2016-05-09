@@ -1,4 +1,18 @@
 
+D
+B
+B
+A
+A
+B
+
+
+
+A
+B
+C
+C
+
 function make_spike_regs(paths, rel_rms_file, rel_thresh, sd_thresh)
 
 paths = strread(paths,'%s','delimiter',' ');
