@@ -1,7 +1,7 @@
 function [q,q_tmp]=Q_grid(conn_cell,nsim,res_pars,c_pars)
 
-q=zeros(size(res_pars,1),size(gamma_pars,1),nsim);
-q_tmp=zeros(size(res_pars,1),size(gamma_pars,1),nsim);
+q=zeros(size(res_pars,1),size(c_pars,1),nsim);
+q_tmp=zeros(size(res_pars,1),size(c_pars,1),nsim);
 	for s=1:nsim
 	%grid search paramater optimization based on Q-Qnull difference
 			r=1;
