@@ -35,8 +35,8 @@ summary(mbehav)
 ```
 
 ##Effect of Flexibility on Reinforcement Learning
-###Striatal flexibility- REML
-We fit a mixed effects generalized linear model using a REML approximation to associate individual learning performance with striatal flexibility across blocks, using lme4.
+###Striatal flexibility- ML
+We fit a mixed effects generalized linear model using a ML approximation to associate individual learning performance with striatal flexibility across blocks, using lme4.
 
 ```{r, echo=FALSE, warning=FALSE,messages=FALSE}
 mlearn_str<-glmer(correct~str_flex+(str_flex || subject),data=flex_behav,weights=weights,family=binomial)
