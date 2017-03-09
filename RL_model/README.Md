@@ -75,7 +75,33 @@ rew[is.na(rew)]<--1
 choice_two[is.na(choice_two)]<--1
 
 rl_standata = list(NS=NS, NC=2, MT=MT, NT= NT, choice=choice, 
-choice_two=red_choice,rew=rew )
-rl_fit <- stan(file = '~/GitHub/hybrid_reinforcement_learning/standard_rl.stan', data = rl_standata, iter = 1250, warmup = 250, chains = 4)
-save(standard_fit,file='~/Documents/Hybrid_RL/stanfit_rl')
+choice_two=choice_two,rew=rew )
+rl_fit <- stan(file = '~/GitHub/rl_flexibility/RL_model/standard_rl.stan', data = rl_standata, iter = 1250, warmup = 250, chains = 4)
+save(rl_fit,file='~/Documents/rl_fit')
+```
+
+```{.R}
+fit_rl<-load('~/Documents/rl_fit')
+fit_extract<-extract(rl_fit,permute=T)
+
+Qvals<-apply(fit_extract$Q,c(2,3,4),mean)
+
+Q_chosen<-matrix(0,dim(Qvals)[2],dim(Qvals)[1])
+Q_unchosen<-Q_chosen
+Q_one<-Q_chosen
+Q_two<-Q_chosen
+
+for(i in 1:dim(Qvals)[1]){
+  for(j in 1:dim(Qvals)[2]){
+      Q_chosen[j,i]<-Qvals[i,j,choice[i,j]]
+      Q_unchosen[j,i]<-Qvals[i,j,unchoice[i,j]]
+      Q_two[j,i]<-Qvals[i,j,2]
+      Q_one[j,i]<-Qvals[i,j,1]
+  }
+
+}
+pe_hyb<-t(apply(fit_extract$delta,c(2,3),mean))
+
+
+
 ```
