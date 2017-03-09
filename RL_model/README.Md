@@ -38,6 +38,9 @@ dlmwrite('/data/engine/rgerraty/learn_dyncon/behavior/choice_fb_long.csv',...
 ###Prepare data for stan and run hierarchical bayesian model
 ```{.R}
 library(rstan)
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
 dat <- read.csv('~/GitHub/rl_flexibility/RL_model/choice_fb_long.csv')
 
 choices<-unique(na.omit(dat$choice))
@@ -76,7 +79,8 @@ choice_two[is.na(choice_two)]<--1
 
 rl_standata = list(NS=NS, NC=2, MT=MT, NT= NT, choice=choice, 
 choice_two=choice_two,rew=rew )
-rl_fit <- stan(file = '~/GitHub/rl_flexibility/RL_model/standard_rl.stan', data = rl_standata, iter = 1250, warmup = 250, chains = 4)
+rl_fit <- stan(file = '~/GitHub/rl_flexibility/RL_model/standard_rl.stan', 
+data = rl_standata, iter = 1250, warmup = 250, chains = 4)
 save(rl_fit,file='~/Documents/rl_fit')
 ```
 
