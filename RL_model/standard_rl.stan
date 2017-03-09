@@ -1,8 +1,10 @@
 data {
 	int NS;//number of subjects
 	int MT;//maximum number of trials
+	int NStim;//number of stimuli (4)
 	int NC;//number of choices (2)
 	int NT[NS];//number of trials per subject
+	int stim[NS,MT];//stimulus shown
 	real<lower=-1,upper=1> rew[NS,MT];//subject x trial reward, -1 for missed
 	int choice[NS,MT];//chosen option, -1 for missed
 	int choice_two[NS,MT];//1=chose red,0=chose blue, -1 for missed
@@ -15,29 +17,42 @@ transformed data{
 
 parameters {
   //hyperpriors on alpha distribution
-  real<lower=1> a1;
-  real<lower=1> a2;
+  real<lower=0> a1;
+  real<lower=0> a2;
   
   //hyperpriors on beta distribution
-  real b_mean;
-  real<lower=0> b_sd;
+  //real b_mean;
+  //real<lower=0> b_sd;
+  real<lower=0> b1;
+  real<lower=0> b2;
+  
   
   //subject-level alpha and betas
   real<lower=0,upper=1> alpha[NS];
-  vector[NS] beta;
+  real<lower=0> beta[NS];
 	
 }
 
 
 transformed parameters{
   //subject x trials x choice Q value matrix
-  real<lower=0, upper=1> Q[NS,MT,NC]; 
+  real Q[NS,MT,NStim,NC]; 
   
   //prediction error matrix
   real delta[NS,MT];
   
+  //
+  for (s in 1:NS){
+    for (m in 1:MT){
+      for (st in 1:NStim){
+        for (c in 1:NC){
+          Q[s,m,st,c]=0.0;
+        }
+      }
+    }
+  }
+  
   //need to define because missing trials will recreate nan's otherwise
-  Q=rep_array(0.0,NS,MT,NC);
   delta=rep_array(0.0,NS,MT);
   
   for (s in 1:NS) {
@@ -45,50 +60,63 @@ transformed parameters{
   	  
   	  //set initial values of Q and delta on first trial
 		  if(t == 1) {
-		    for (c in 1:NC){
-		      Q[s,t,c]=0.5;
+		    for (st in 1:NStim){
+		      for (c in 1:NC){
+		        Q[s,t,st,c]=.5;//want to change if stan ever allows int_to_real
+		      }
 		    }
 		    delta[s,t]=0;
 		  }
 		    if (rew[s,t] >= 0){
 		      //PE = reward-expected
-		      delta[s,t]=rew[s,t]-Q[s,t,choice[s,t]];
+		      delta[s,t]=rew[s,t]-Q[s,t,stim[s,t],choice[s,t]];
 		      
 		      if (t<NT[s]){
 		        //update value with alpha-weighted PE
-		        Q[s,t+1,choice[s,t]]= Q[s,t,choice[s,t]] + alpha[s]*delta[s,t];
-		        
-		        //value of unchosen option is not updated
-		        Q[s,t+1,abs(choice[s,t]-3)]=Q[s,t,abs(choice[s,t]-3)];
-		        
+		        for (st in 1:NStim)
+		          if (stim[s,t]==st){
+		            Q[s,t+1,st,choice[s,t]]= Q[s,t,st,choice[s,t]] +
+		            alpha[s]*delta[s,t];
+		          }else{		        
+		            //value of unchosen option is not updated
+		            Q[s,t+1,st,choice[s,t]]= Q[s,t,st,choice[s,t]];
+		          }
 		      }
 		    } else {
 		        //if no response, keep Q value and set delta to 0
 		        if (t<NT[s]){
-		          for (c in 1:NC){
-		            Q[s,t+1,c]=Q[s,t ,c];
+		          for (st in 1:NStim){
+		            for (c in 1:NC){
+		              Q[s,t+1,st,c]=Q[s,t,st,c];
+		            }
 		          }
-		        }
 		        delta[s,t]=0;
-		    }
-		}
-  }
+		        }
+		   }
+      }
+    }
 }
 
 
 model {
   //hyperpriors
-  a1 ~ normal(0,5);
-  a2 ~ normal(0,5);
-  b_mean ~ normal (0,5);
-  b_sd ~ cauchy (0,2.5);
+  //a1 ~ normal(0,5);
+  //a2 ~ normal(0,5);
+  //b_mean ~ normal (0,5);
+  //b_sd ~ cauchy (0,2.5);
+  
+  a1 ~ cauchy(0,10);
+  a2 ~ cauchy(0,10);
+  b1 ~ cauchy(0,10);
+  b2 ~ cauchy(0,10);
   
   //distributions of subject effects
   alpha ~ beta(a1,a2);
   
   //for (s in 1:NS){
-    beta~normal(b_mean,b_sd);
+    //beta~normal(b_mean,b_sd);
   //}
+  beta ~ gamma(b1,b2);
   
   
   //data generating process (likelihood)
@@ -96,7 +124,7 @@ model {
 		for (t in 1:NT[s]) {
 		  if (choice[s,t] > 0) {
 		    choice_two[s,t] ~ bernoulli_logit(
-		      beta[s]*(Q[s,t,2]-Q[s,t,1]));
+		      beta[s]*(Q[s,t,stim[s,t],2]-Q[s,t,stim[s,t],1]));
 		  }
 		}
 	}
@@ -114,7 +142,7 @@ generated quantities {
     for (t in 1:NT[s]) {
       if (choice[s,t] > 0) {
          log_lik[n]=bernoulli_logit_lpmf(choice_two[s,t] | 
-        beta[s]*(Q[s,t,2]-Q[s,t,1]));
+        beta[s]*(Q[s,t,stim[s,t],2]-Q[s,t,stim[s,t],1]));
       }
       n = n+1;
     }
