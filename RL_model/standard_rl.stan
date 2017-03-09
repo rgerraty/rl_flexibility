@@ -73,7 +73,7 @@ transformed parameters{
 		      
 		      if (t<NT[s]){
 		        //update value with alpha-weighted PE
-		        for (st in 1:NStim)
+		        for (st in 1:NStim){
 		          if (stim[s,t]==st){
 		            Q[s,t+1,st,choice[s,t]]= Q[s,t,st,choice[s,t]] +
 		            alpha[s]*delta[s,t];
@@ -81,6 +81,7 @@ transformed parameters{
 		            //value of unchosen option is not updated
 		            Q[s,t+1,st,choice[s,t]]= Q[s,t,st,choice[s,t]];
 		          }
+		            Q[s,t+1,st,abs(choice[s,t]-3)] = Q[s,t,st,abs(choice[s,t]-3)];
 		      }
 		    } else {
 		        //if no response, keep Q value and set delta to 0
@@ -92,9 +93,10 @@ transformed parameters{
 		          }
 		        delta[s,t]=0;
 		        }
-		   }
+		      }
       }
     }
+  }
 }
 
 
