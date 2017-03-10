@@ -89,6 +89,7 @@ data = rl_standata, iter = 1250, warmup = 250, chains = 4)
 save(rl_fit,file='~/Documents/rl_fit')
 ```
 
+###Extract parameters from model
 ```{.R}
 fit_rl<-load('~/Documents/rl_fit')
 fit_extract<-extract(rl_fit,permute=T)
