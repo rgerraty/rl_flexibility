@@ -4,10 +4,10 @@ data {
 	int NStim;//number of stimuli (4)
 	int NC;//number of choices (2)
 	int NT[NS];//number of trials per subject
-	int stim[NS,MT];//stimulus shown
+	int stim[NS,MT];//stimulus shown (1-4)
 	real<lower=-1,upper=1> rew[NS,MT];//subject x trial reward, -1 for missed
 	int choice[NS,MT];//chosen option, -1 for missed
-	int choice_two[NS,MT];//1=chose red,0=chose blue, -1 for missed
+	int choice_two[NS,MT];//1=chose two,0=chose one, -1 for missed
 }
 
 transformed data{
@@ -21,8 +21,6 @@ parameters {
   real<lower=0> a2;
   
   //hyperpriors on beta distribution
-  //real b_mean;
-  //real<lower=0> b_sd;
   real<lower=0> b1;
   real<lower=0> b2;
   
@@ -41,7 +39,7 @@ transformed parameters{
   //prediction error matrix
   real delta[NS,MT];
   
-  //
+//need to assign Q and PE because missing trials will recreate nan's otherwise
   for (s in 1:NS){
     for (m in 1:MT){
       for (st in 1:NStim){
@@ -52,7 +50,6 @@ transformed parameters{
     }
   }
   
-  //need to define because missing trials will recreate nan's otherwise
   delta=rep_array(0.0,NS,MT);
   
   for (s in 1:NS) {
@@ -62,7 +59,7 @@ transformed parameters{
 		  if(t == 1) {
 		    for (st in 1:NStim){
 		      for (c in 1:NC){
-		        Q[s,t,st,c]=.5;//want to change if stan ever allows int_to_real
+		        Q[s,t,st,c]=.5;//want to change to 1/NC if stan ever allows int_to_real
 		      }
 		    }
 		    delta[s,t]=0;
@@ -108,17 +105,13 @@ model {
   //b_mean ~ normal (0,5);
   //b_sd ~ cauchy (0,2.5);
   
-  a1 ~ cauchy(0,10);
-  a2 ~ cauchy(0,10);
-  b1 ~ cauchy(0,10);
-  b2 ~ cauchy(0,10);
+  a1 ~ cauchy(0,5);
+  a2 ~ cauchy(0,5);
+  b1 ~ cauchy(0,5);
+  b2 ~ cauchy(0,5);
   
   //distributions of subject effects
   alpha ~ beta(a1,a2);
-  
-  //for (s in 1:NS){
-    //beta~normal(b_mean,b_sd);
-  //}
   beta ~ gamma(b1,b2);
   
   
@@ -128,6 +121,7 @@ model {
 		  if (choice[s,t] > 0) {
 		    choice_two[s,t] ~ bernoulli_logit(
 		      beta[s]*(Q[s,t,stim[s,t],2]-Q[s,t,stim[s,t],1]));
+		    
 		  }
 		}
 	}
