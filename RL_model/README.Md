@@ -22,9 +22,9 @@ for k = 1:length(a)
     shown_corr(no_resp)=NaN;
     ntrials=size(resp',1);
     trial=1:ntrials';
-    longform=[longform;repmat(subnum,ntrials,1) trial' chose_right shown_corr];
+    longform=[longform;repmat(subnum,ntrials,1) stim_shown' trial' chose_right shown_corr];
 end
-header={'sub','trial','choice','fb'};
+header={'sub','stim','trial','choice','fb'};
 header2=sprintf('%s,',header{:});header2(end)=[];
 dlmwrite('/data/engine/rgerraty/learn_dyncon/behavior/choice_fb_long.csv',...
 	header2,'')
@@ -53,19 +53,24 @@ dat$chose_two<-dat$chosen==2
 
 subs = unique(dat$sub);
 NS = length(subs);
+NStim=length(unique(dat$stim));
 MT=max(dat$trial);
 NT = array(0,NS);
 choice = array(0,c(NS,MT));
 unchoice=choice;
 choice_two=choice;
-rew = array(0.0,c(NS,MT));
+rew = choice;
+stim=choice;
 
 for (i in 1:NS) {
   NT[i] = nrow(subset(dat,sub==subs[i]));
+
+  stim[i,1:NT[i]] = subset(dat,sub==subs[i])$stim;
   
   #choice and reward history
   choice[i,1:NT[i]] = subset(dat,sub==subs[i])$chosen;
   unchoice[i,1:NT[i]] = subset(dat,sub==subs[i])$unchosen;
+
   rew[i,1:NT[i]] = subset(dat,sub==subs[i])$fb;
 
   #based on choosing second option
@@ -77,8 +82,8 @@ unchoice[is.na(unchoice)]<--1
 rew[is.na(rew)]<--1
 choice_two[is.na(choice_two)]<--1
 
-rl_standata = list(NS=NS, NC=2, MT=MT, NT= NT, choice=choice, 
-choice_two=choice_two,rew=rew )
+rl_standata = list(NS=NS, NC=2, NStim=NStim, MT=MT, NT= NT, choice=choice, 
+stim=stim,choice_two=choice_two,rew=rew );
 rl_fit <- stan(file = '~/GitHub/rl_flexibility/RL_model/standard_rl.stan', 
 data = rl_standata, iter = 1250, warmup = 250, chains = 4)
 save(rl_fit,file='~/Documents/rl_fit')
@@ -88,19 +93,21 @@ save(rl_fit,file='~/Documents/rl_fit')
 fit_rl<-load('~/Documents/rl_fit')
 fit_extract<-extract(rl_fit,permute=T)
 
-Qvals<-apply(fit_extract$Q,c(2,3,4),mean)
+fit_extract$beta_mean<-fit_extract$b1/fit_extract$b2
+fit_extract$alpha_mean<-fit_extract$a1/(fit_extract$a1+fit_extract$a2)
+
+betas<-apply(fit_extract$beta,2,mean)
+alphas<-apply(fit_extract$alpha,2,mean)
+
+Qvals<-apply(fit_extract$Q,c(2,3,4,5),mean)
 
 Q_chosen<-matrix(0,dim(Qvals)[2],dim(Qvals)[1])
 Q_unchosen<-Q_chosen
-Q_one<-Q_chosen
-Q_two<-Q_chosen
 
 for(i in 1:dim(Qvals)[1]){
   for(j in 1:dim(Qvals)[2]){
-      Q_chosen[j,i]<-Qvals[i,j,choice[i,j]]
-      Q_unchosen[j,i]<-Qvals[i,j,unchoice[i,j]]
-      Q_two[j,i]<-Qvals[i,j,2]
-      Q_one[j,i]<-Qvals[i,j,1]
+      Q_chosen[j,i]<-Qvals[i,j,stim[i,j],choice[i,j]]
+      Q_unchosen[j,i]<-Qvals[i,j,stim[i,j],unchoice[i,j]]
   }
 
 }
