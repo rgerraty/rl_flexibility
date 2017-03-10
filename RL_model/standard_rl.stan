@@ -78,9 +78,10 @@ transformed parameters{
 		            Q[s,t+1,st,choice[s,t]]= Q[s,t,st,choice[s,t]] +
 		            alpha[s]*delta[s,t];
 		          }else{		        
-		            //value of unchosen option is not updated
+		            //value of chosen option for unpresented stims not updated
 		            Q[s,t+1,st,choice[s,t]]= Q[s,t,st,choice[s,t]];
 		          }
+		            //value of unchosen option is not updated (for any stimuli)
 		            Q[s,t+1,st,abs(choice[s,t]-3)] = Q[s,t,st,abs(choice[s,t]-3)];
 		      }
 		    } else {
