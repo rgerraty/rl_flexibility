@@ -1,5 +1,7 @@
+#Reinforcement learning model
+
 ###Combine raw reinforcement learning data from individual subjects
-```{.matlab}
+```.matlab
 %load in the data
 a=dir('/data/engine/rgerraty/learn_dyncon/behavior/*_tb_l*_svlo*.mat');
 
@@ -36,7 +38,7 @@ dlmwrite('/data/engine/rgerraty/learn_dyncon/behavior/choice_fb_long.csv',...
 ```
 
 ###Prepare data for stan and run hierarchical bayesian model
-```{.R}
+```.r
 library(rstan)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
@@ -90,7 +92,7 @@ save(rl_fit,file='~/Documents/rl_fit')
 ```
 
 ###Extract parameters from model
-```{.R}
+```.r
 fit_rl<-load('~/Documents/rl_fit')
 fit_extract<-extract(rl_fit,permute=T)
 
@@ -99,6 +101,26 @@ fit_extract$alpha_mean<-fit_extract$a1/(fit_extract$a1+fit_extract$a2)
 
 betas<-apply(fit_extract$beta,2,mean)
 alphas<-apply(fit_extract$alpha,2,mean)
+
+wb_acorrel<-NULL
+str_acorrel<-NULL
+wb_bcorrel<-NULL
+str_bcorrel<-NULL
+
+for( i in seq(1,dim(fit_extract$beta)[1],1)){
+	betas_tmp=fit_extract$beta[i,]
+	alphas_tmp=fit_extract$alpha[i,]
+	wb_acorrel[i]<-cor(rl_flex$wb_flex,alphas_tmp,method='spearman')
+	str_acorrel[i]<-cor(rl_flex$str_flex,alphas_tmp,method='spearman')
+	wb_bcorrel[i]<-cor(rl_flex$wb_flex,betas_tmp,method='spearman')
+	str_bcorrel[i]<-cor(rl_flex$str_flex,betas_tmp,method='spearman')
+
+
+	wb_apbcorrel[i]<-pcor.test(rl_flex$wb_flex,alphas_tmp,betas_tmp,method='spearman')[1]
+	wb_bpacorrel[i]<-pcor.test(rl_flex$wb_flex,betas_tmp,alphas_tmp,method='spearman')[1]
+	str_bpacorrel[i]<-pcor.test(rl_flex$str_flex,betas_tmp,alphas_tmp,method='spearman')[1]
+	str_apbcorrel[i]<-pcor.test(rl_flex$str_flex,alphas_tmp,betas_tmp,method='spearman')[1]
+}
 
 Qvals<-apply(fit_extract$Q,c(2,3,4,5),mean)
 
