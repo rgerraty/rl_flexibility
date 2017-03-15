@@ -1,6 +1,6 @@
-#Reinforcement learning model
+# Reinforcement learning model
 
-###Combine raw reinforcement learning data from individual subjects
+### Combine raw reinforcement learning data from individual subjects
 ```.matlab
 %load in the data
 a=dir('/data/engine/rgerraty/learn_dyncon/behavior/*_tb_l*_svlo*.mat');
@@ -37,7 +37,7 @@ dlmwrite('/data/engine/rgerraty/learn_dyncon/behavior/choice_fb_long.csv',...
 !cp /data/engine/rgerraty/learn_dyncon/behavior/choice_fb_long.csv ~/GitHub/rl_flexibility/RL_model/choice_fb_long.csv
 ```
 
-###Prepare data for stan and run hierarchical bayesian model
+### Prepare data for stan and run hierarchical bayesian model
 ```.r
 library(rstan)
 rstan_options(auto_write = TRUE)
@@ -91,7 +91,7 @@ data = rl_standata, iter = 1250, warmup = 250, chains = 4)
 save(rl_fit,file='~/Documents/rl_fit')
 ```
 
-###Extract parameters from model
+### Extract parameters from model
 ```.r
 fit_rl<-load('~/Documents/rl_fit')
 fit_extract<-extract(rl_fit,permute=T)
