@@ -1,5 +1,5 @@
-###Network Flexibility and Reinforcement Learning
-Raphael Gerraty, 2015-2016
+# Network Flexibility and Reinforcement Learning
+## Raphael Gerraty, 2015-2016
 
 Descriptions and example scripts for running network preprocessing and analysis functions contained in this repository. See paper for details when it comes out.
 
@@ -181,7 +181,7 @@ dlmwrite('/data/engine/rgerraty/learn_dyncon/flex_allrois.csv',flex_allrois)
 
 
 
-###ML and fully Bayesian hierarchical models 
+### ML and fully Bayesian hierarchical models 
 Estimate the effect of striatal and whole-brain flexibility on reinforcement learning. See models.Rmd and models.pdf for more details. 
 
 ```.r
