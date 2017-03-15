@@ -181,8 +181,8 @@ dlmwrite('/data/engine/rgerraty/learn_dyncon/flex_allrois.csv',flex_allrois)
 
 
 
-###ML and fully Bayesian hierarchical models for the effect of striatal and whole-brain flexibility on reinforcement learning 
-See models.Rmd and models.pdf for more details. 
+###ML and fully Bayesian hierarchical models 
+Estimate the effect of striatal and whole-brain flexibility on reinforcement learning. See models.Rmd and models.pdf for more details. 
 
 ```.r
 library(reshape2)
