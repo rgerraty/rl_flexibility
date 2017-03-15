@@ -30,7 +30,7 @@ done
 ### Running nonlinear registration with FNIRT
 After nuisance regression has been run, the residual timeseries needs to be transformed into standard space (in this case, MNI). Make sure fsl\_anat has been run on each structural image first. The following bash code was used to perform these transformations:
 
-``` {.bash}
+```.bash
 #fnirt has already been run, just applying transformation
 for i in /data/engine/rgerraty/learn_dyncon/4*/Learn*; 
     do 
@@ -55,7 +55,7 @@ done
 ### Extracting time courses
 Once the preprocessed images have been registered, we extract mean timecourses for each Harvard-Oxford ROI, using the function extract_ROIs.sh. The output of this function is a timecourse for each ROI in the specified input folder, as well as a .txt file containing all of the ROIs. The bash code used to run this function on each learning block for each subject is below:
 
-``` {.bash}
+```.bash
 for i in /data/engine/rgerraty/learn_dyncon/4*/Learn?_PEprior.feat/36par+spikes.feat/; 
     do 
     #extract timeseries (mean or 1st eigenvector, see function) data from each ROI in ~/Harvard-Oxford_ROIs/ 
@@ -69,7 +69,7 @@ done
 Connectivity between pairs of ROIs was measured by average magnitude squared coherence in the .06-.12 Hz band, computed in MATLAB. The code below calls a function for creating a coherence matrices in a specified frequency range for specified time windows (in this case 25 TRs, or 50 s). These are saved as a .mat file for multi-slice community detection. 
 
 
-``` {.matlab}
+```.matlab
 addpath ~/GitHub/rl_flexibility
 %read in all subject/run ROI timeseries directories 
 [a,b]=system('ls -d /data/engine/rgerraty/learn_dyncon/4*/Learn?_PEprior.feat/36par+spikes.feat/H-O_rois');
@@ -94,7 +94,7 @@ end
 Input coherence matrix for each block. Also need number of blocks,
 resolution and coupling parameters. In Matlab
 
-``` {.matlab}
+```.matlab
 %need multi-slice, flexibility codes not yet on GitHub for network_diags to run 
 addpath ~/GitHub/rl_flexibility
 addpath ~/scripts/MATLAB/GenLouvain_for_Raphael/
@@ -133,7 +133,7 @@ end
 
 For plotting and preparing for heirarchical models. Matlab.
 
-``` {.matlab}
+```.matlab
 
 %load data and concatenate flexibility statistics
 [a,b]=system('ls -d /data/engine/rgerraty/learn_dyncon/4*/flex.mat');
@@ -182,7 +182,7 @@ dlmwrite('/data/engine/rgerraty/learn_dyncon/flex_allrois.csv',flex_allrois)
 ###ML and fully Bayesian hierarchical models for the effect of striatal and whole-brain flexibility on reinforcement learning 
 See models.Rmd and models.pdf for more details. 
 
-```{.r}
+```.r
 library(reshape2)
 library(lme4)
 library(brms)
@@ -225,7 +225,7 @@ mlearn_stan<-brm(numcorr~str_flex+(str_flex|subject),data=flex_behav,family=bino
 ###Whole-brain search for effects of flexibility on learning
 
 
-```{.r}
+```.r
 #load in data
 library(lme4)
 roi_data<-read.csv('/data/engine/rgerraty/learn_dyncon/flex_allrois.csv',header=0)
