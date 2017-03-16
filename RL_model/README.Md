@@ -12,7 +12,7 @@ a={a.name};
 
 longform=[];
 for k = 1:length(a)
-    k
+	k
 	clear subnum chose_right shown_corr trial
 	filea=a{(k)};
 	load(a{(k)});	
@@ -102,41 +102,58 @@ fit_extract$alpha_mean<-fit_extract$a1/(fit_extract$a1+fit_extract$a2)
 betas<-apply(fit_extract$beta,2,mean)
 alphas<-apply(fit_extract$alpha,2,mean)
 
+fit_extract$beta_mean<-fit_extract$b1/fit_extract$b2
+fit_extract$alpha_mean<-fit_extract$a1/(fit_extract$a1+fit_extract$a2)
+
+str_acorrel<-matrix(0,4000,6)
+str_bcorrel<-matrix(0,4000,6)
+str_apbcorrel<-matrix(0,4000,6)
+str_bpacorrel<-matrix(0,4000,6)
 wb_acorrel<-NULL
-str_acorrel<-NULL
 wb_bcorrel<-NULL
-str_bcorrel<-NULL
+wb_apbcorrel<-NULL
+wb_bpacorrl<-NULL
+
+meanflex_rois<-tapply(flexdat$flex,list(flexdat$Sub,flexdat$ROI),mean)
+meanflex<-rowMeans(meanflex_rois)
 
 for( i in seq(1,dim(fit_extract$beta)[1],1)){
-	betas_tmp=fit_extract$beta[i,]
-	alphas_tmp=fit_extract$alpha[i,]
-	wb_acorrel[i]<-cor(rl_flex$wb_flex,alphas_tmp,method='spearman')
-	str_acorrel[i]<-cor(rl_flex$str_flex,alphas_tmp,method='spearman')
-	wb_bcorrel[i]<-cor(rl_flex$wb_flex,betas_tmp,method='spearman')
-	str_bcorrel[i]<-cor(rl_flex$str_flex,betas_tmp,method='spearman')
-
-
-	wb_apbcorrel[i]<-pcor.test(rl_flex$wb_flex,alphas_tmp,betas_tmp,method='spearman')[1]
-	wb_bpacorrel[i]<-pcor.test(rl_flex$wb_flex,betas_tmp,alphas_tmp,method='spearman')[1]
-	str_bpacorrel[i]<-pcor.test(rl_flex$str_flex,betas_tmp,alphas_tmp,method='spearman')[1]
-	str_apbcorrel[i]<-pcor.test(rl_flex$str_flex,alphas_tmp,betas_tmp,method='spearman')[1]
+  
+  betas_tmp=fit_extract$beta[i,]
+  alphas_tmp=fit_extract$alpha[i,]
+  k<-1
+  
+  wb_acorrel[i]<-cor(meanflex,alphas_tmp)
+  wb_bcorrel[i]<-cor(meanflex,betas_tmp)
+  wb_apbcorrel[i]<-pcor.test(meanflex,alphas_tmp,betas_tmp)[1]
+  wb_bpacorrel[i]<-pcor.test(meanflex,betas_tmp,alphas_tmp)[1]
+  
+  for(j in str_ind){
+  str_acorrel[i,k]<-cor(meanflex_rois[,k],alphas_tmp)
+  str_bcorrel[i,k]<-cor(meanflex_rois[,k],betas_tmp)
+  
+  str_bpacorrel[i,k]<-pcor.test(meanflex_rois[,k],betas_tmp,alphas_tmp)$estimate
+  str_apbcorrel[i,k]<-pcor.test(meanflex_rois[,k],alphas_tmp,betas_tmp)$estimate
+  k<-k+1
+  }
 }
 
 par(mfrow=c(1,2))
 
-plot(str_bcorrel,str_acorrel,
-	col=rgb(0,0,0,alpha=0),pch=21,bg=rgb(0,0,0,alpha=.1),
-	xlab="Correlation with Beta",ylab="Correlation with Alpha",
-	main="Striatum Flexibility")
+plot(rowMeans(str_bcorrel),rowMeans(str_acorrel),
+     col=rgb(0,0,0,alpha=0),pch=21,bg=rgb(0,0,0,alpha=.02),
+     xlab="Correlation with Beta",ylab="Correlation with Alpha",
+     main="Striatum Flexibility")
 abline(v=0,lty=2)
 abline(h=0,lty=2)
 
 plot(wb_bcorrel,wb_acorrel,
-	col=rgb(0,0,0,alpha=0),pch=21,bg=rgb(0,0,0,alpha=.1),
-	xlab="Correlation with Beta",ylab="Correlation with Alpha",
-	main="Whole-brain Flexibility")
+     col=rgb(0,0,0,alpha=0),pch=21,bg=rgb(0,0,0,alpha=.02),
+     xlab="Correlation with Beta",ylab="Correlation with Alpha",
+     main="Whole-brain Flexibility")
 abline(v=0,lty=2)
 abline(h=0,lty=2)
+
 
 Qvals<-apply(fit_extract$Q,c(2,3,4,5),mean)
 
