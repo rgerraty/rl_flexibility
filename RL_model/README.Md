@@ -122,6 +122,22 @@ for( i in seq(1,dim(fit_extract$beta)[1],1)){
 	str_apbcorrel[i]<-pcor.test(rl_flex$str_flex,alphas_tmp,betas_tmp,method='spearman')[1]
 }
 
+par(mfrow=c(1,2))
+
+plot(str_bcorrel,str_acorrel,
+	col=rgb(0,0,0,alpha=0),pch=21,bg=rgb(0,0,0,alpha=.1),
+	xlab="Correlation with Beta",ylab="Correlation with Alpha",
+	main="Striatum Flexibility")
+abline(v=0,lty=2)
+abline(h=0,lty=2)
+
+plot(wb_bcorrel,wb_acorrel,
+	col=rgb(0,0,0,alpha=0),pch=21,bg=rgb(0,0,0,alpha=.1),
+	xlab="Correlation with Beta",ylab="Correlation with Alpha",
+	main="Whole-brain Flexibility")
+abline(v=0,lty=2)
+abline(h=0,lty=2)
+
 Qvals<-apply(fit_extract$Q,c(2,3,4,5),mean)
 
 Q_chosen<-matrix(0,dim(Qvals)[2],dim(Qvals)[1])
