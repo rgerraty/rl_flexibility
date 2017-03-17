@@ -112,7 +112,7 @@ model {
   
   //distributions of subject effects
   alpha ~ beta(a1,a2);
-  beta ~ gamma(b1,b2);
+  beta ~ gamma(b1,1/b2);
   
   
   //data generating process (likelihood)
