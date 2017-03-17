@@ -100,11 +100,6 @@ transformed parameters{
 
 model {
   //hyperpriors
-  //a1 ~ normal(0,5);
-  //a2 ~ normal(0,5);
-  //b_mean ~ normal (0,5);
-  //b_sd ~ cauchy (0,2.5);
-  
   a1 ~ cauchy(0,5);
   a2 ~ cauchy(0,5);
   b1 ~ cauchy(0,5);
