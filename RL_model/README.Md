@@ -141,14 +141,14 @@ for( i in seq(1,dim(fit_extract$beta)[1],1)){
 par(mfrow=c(1,2))
 
 plot(rowMeans(str_bcorrel),rowMeans(str_acorrel),
-     col=rgb(0,0,0,alpha=0),pch=21,bg=rgb(0,0,0,alpha=.02),
+     col=rgb(0,0,0,alpha=0),pch=21,bg=rgb(0,0,0,alpha=.03),
      xlab="Correlation with Beta",ylab="Correlation with Alpha",
      main="Striatum Flexibility")
 abline(v=0,lty=2)
 abline(h=0,lty=2)
 
 plot(wb_bcorrel,wb_acorrel,
-     col=rgb(0,0,0,alpha=0),pch=21,bg=rgb(0,0,0,alpha=.02),
+     col=rgb(0,0,0,alpha=0),pch=21,bg=rgb(0,0,0,alpha=.03),
      xlab="Correlation with Beta",ylab="Correlation with Alpha",
      main="Whole-brain Flexibility")
 abline(v=0,lty=2)
