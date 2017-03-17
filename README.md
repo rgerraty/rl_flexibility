@@ -223,7 +223,7 @@ mlearn_stan<-brm(numcorr~str_flex+(str_flex|subject),data=flex_behav,family=bino
 
 ```
 
-###Whole-brain search for effects of flexibility on learning
+### Whole-brain search for effects of flexibility on learning
 
 ```.r
 #load in data
