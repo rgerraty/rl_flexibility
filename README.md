@@ -6,7 +6,7 @@ Descriptions and example scripts for running network preprocessing and analysis 
 
 
 ### Extended Preprocessing
-Because of the known effect of motion on measures of connectivity, we followed up standard preprocessing in FSL with an extended nuisance regression. Affine transformation parameters from motion correction, CSF, white matter, and whole-brain signals are regressed against preprocessed 4D data, along with the squares, derivatives, and squared derivatives of these confounds. See Satterthwaite et al 2013 for details. 
+Because of the known effect of motion on measures of connectivity, we followed up standard preprocessing in FSL with an extended nuisance regression. Affine transformation parameters from motion correction, CSF, white matter, and whole-brain signals are regressed against preprocessed 4D data, along with the squares, derivatives, and squared derivatives of these confounds. See Satterthwaite et al 2013 for details. Bash code:
 
 ```.bash
 for i in /data/engine/rgerraty/learn_dyncon/4*/Learn*/filtered_func_data.nii.gz
@@ -182,7 +182,7 @@ dlmwrite('/data/engine/rgerraty/learn_dyncon/flex_allrois.csv',flex_allrois)
 
 
 ### ML and fully Bayesian hierarchical models 
-Estimate the effect of striatal and whole-brain flexibility on reinforcement learning. See models.Rmd and models.pdf for more details. 
+Estimate the effect of striatal and whole-brain flexibility on reinforcement learning. See models.Rmd and models.pdf for more details. R
 
 ```.r
 library(reshape2)
@@ -224,6 +224,7 @@ mlearn_stan<-brm(numcorr~str_flex+(str_flex|subject),data=flex_behav,family=bino
 ```
 
 ### Whole-brain search for effects of flexibility on learning
+R
 
 ```.r
 #load in data
@@ -247,4 +248,38 @@ for(i in 1:dim(roi_data)[2]){
 }
 write(p,'/data/engine/rgerraty/learn_dyncon/p_vals_learning_glm.csv')
 write(b,'/data/engine/rgerraty/learn_dyncon/b_vals_learning_glm.csv')
+```
+
+### Combine module allegiance matrices for striatum ROIs across subjects
+Matlab
+
+```.matlab
+str_ind=[49,51,54,104,106,109];
+[a,b]=system('ls -d /data/engine/rgerraty/learn_dyncon/4*/a_mat.mat');
+c=strread(b,'%s');
+
+h=1
+for s=1:length(c)
+  clear a_mat clear a_mat_str
+  load(c{s})
+  a_mat(a_mat==1)=NaN;
+  a_mat_str=a_mat(:,str_ind,:); 
+  for i=1:size(a_mat_str,1)
+    for j=1:size(a_mat_str,2)
+      for k=1:size(a_mat_str,3)
+        a_mat_long(h,:)=[a_mat_str(i,j,k),i,j,ceil(k/8),s];
+        h=h+1;
+      end
+    end
+  end
+end
+
+header={'allegiance','ROI','str_roi','block','sub'};
+header2=sprintf('%s,',header{:});header2(end)=[];
+dlmwrite('/data/engine/rgerraty/learn_dyncon/alleg_long.csv',...
+  header2,'')
+
+dlmwrite('/data/engine/rgerraty/learn_dyncon/alleg_long.csv',...
+  a_mat_long,'-append','delimiter',',')
+
 ```
