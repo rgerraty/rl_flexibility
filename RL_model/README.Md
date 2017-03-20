@@ -102,7 +102,7 @@ fit_extract$alpha_mean<-fit_extract$a1/(fit_extract$a1+fit_extract$a2)
 betas<-apply(fit_extract$beta,2,mean)
 alphas<-apply(fit_extract$alpha,2,mean)
 
-fit_extract$beta_mean<-fit_extract$b1/fit_extract$b2
+fit_extract$beta_mean<-fit_extract$b1*fit_extract$b2
 fit_extract$alpha_mean<-fit_extract$a1/(fit_extract$a1+fit_extract$a2)
 
 str_acorrel<-matrix(0,4000,6)
@@ -114,6 +114,7 @@ wb_bcorrel<-NULL
 wb_apbcorrel<-NULL
 wb_bpacorrl<-NULL
 
+flexdat<-read.csv("~/Documents/flex_allrois.csv",header=F)
 meanflex_rois<-tapply(flexdat$flex,list(flexdat$Sub,flexdat$ROI),mean)
 meanflex<-rowMeans(meanflex_rois)
 
@@ -143,14 +144,14 @@ par(mfrow=c(1,2))
 plot(rowMeans(str_bcorrel),rowMeans(str_acorrel),
      col=rgb(0,0,0,alpha=0),pch=21,bg=rgb(0,0,0,alpha=.03),
      xlab="Correlation with Beta",ylab="Correlation with Alpha",
-     main="Striatum Flexibility")
+     main="Striatum Flexibility",xlim=c(-.1,.5))
 abline(v=0,lty=2)
 abline(h=0,lty=2)
 
 plot(wb_bcorrel,wb_acorrel,
      col=rgb(0,0,0,alpha=0),pch=21,bg=rgb(0,0,0,alpha=.03),
      xlab="Correlation with Beta",ylab="Correlation with Alpha",
-     main="Whole-brain Flexibility")
+     main="Whole-brain Flexibility",xlim=c(-.1,.5))
 abline(v=0,lty=2)
 abline(h=0,lty=2)
 
