@@ -1,6 +1,7 @@
 # Reinforcement learning model
 
 ### Combine raw reinforcement learning data from individual subjects
+Matlab
 ```.matlab
 %load in the data
 a=dir('/data/engine/rgerraty/learn_dyncon/behavior/*_tb_l*_svlo*.mat');
@@ -38,6 +39,7 @@ dlmwrite('/data/engine/rgerraty/learn_dyncon/behavior/choice_fb_long.csv',...
 ```
 
 ### Prepare data for stan and run hierarchical bayesian model
+R
 ```.r
 library(rstan)
 rstan_options(auto_write = TRUE)
@@ -92,6 +94,7 @@ save(rl_fit,file='~/Documents/rl_fit')
 ```
 
 ### Extract parameters from model
+R
 ```.r
 fit_rl<-load('~/Documents/rl_fit')
 fit_extract<-extract(rl_fit,permute=T)
@@ -114,9 +117,20 @@ wb_bcorrel<-NULL
 wb_apbcorrel<-NULL
 wb_bpacorrl<-NULL
 
+
 flexdat<-read.csv("~/Documents/flex_allrois.csv",header=F)
+flex_behav<-read.csv("~/Documents/flex_behav.csv",header=T)
+flexdat$Sub<-rep(seq(1,22,1),each=4)
+flexdat$Block<-rep(seq(1,4,1),times=22)
+flexdat$Corr<-flex_behav$correct
+flexdat$weights<-flex_behav$weights
+flexdat<-melt(flexdat,id=c("Sub","Block","Corr","weights"))
+names(flexdat)[c(5,6)]<-c("ROI","flex")
+flexdat$ROI<-as.factor(as.numeric(flexdat$ROI))
 meanflex_rois<-tapply(flexdat$flex,list(flexdat$Sub,flexdat$ROI),mean)
 meanflex<-rowMeans(meanflex_rois)
+
+str_ind=c(49,51,54,104,106,109);
 
 for( i in seq(1,dim(fit_extract$beta)[1],1)){
   
