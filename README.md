@@ -97,8 +97,8 @@ resolution and coupling parameters. In Matlab
 ```.matlab
 %need multi-slice, flexibility codes not yet on GitHub for network_diags to run 
 addpath ~/GitHub/rl_flexibility
-addpath ~/scripts/MATLAB/GenLouvain_for_Raphael/
-addpath ~/scripts/MATLAB/Bassett_Code/
+addpath ~/GitHub/GenLouvain/
+addpath ~/GitHub/Bassett_Code/
 
 %read in data
 [a,b]=system('ls -d /data/engine/rgerraty/learn_dyncon/4*/Learn?_PEprior.feat/36par+spikes.feat/H-O_rois/');
