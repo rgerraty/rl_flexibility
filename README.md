@@ -190,35 +190,63 @@ library(lme4)
 library(brms)
 
 #prepare data for binomial logistic modelling
+library(lme4)
+library(reshape2)
+library(ggplot2)
+
+flexdat<-read.csv("/data/engine/rgerraty/learn_dyncon/flex_allrois.csv",header=F)
 
 #read in trial-by-by trial behavioral data 
 data<-read.delim('/data/engine/rgerraty/learn_dyncon/behav_data.tsv',header=1)
+
 data$block<-rep(rep(seq(1,4,1),each=30),22)
 
-#read in block-level flexibility data
-flexdat<-read.csv('/data/engine/rgerraty/learn_dyncon/flexdata500sim.csv',header=0)
-names(flexdat)<-c('subject','block','wb_flex','str_flex')
+flexdat$subject<-rep(seq(1,22,1),each=4)
+flexdat$Block<-rep(seq(1,4,1),times=22)
+flexdat$Corr<-melt(tapply(data$optCor,list(data$block,data$subjectNum),mean,na.rm=1))$value
 
-#get proportion correct for each block
-flex_behav$correct<- melt(tapply(data$optCor,list(data$block,data$subjectNum),mean,na.rm=1))$value
-
-#get weights (number of trials with responses) for each block
 nacount<-is.na(data$optCor)
 weights<-melt(tapply(nacount,list(data$block,data$subjectNum),sum))
-flex_behav$weights<-30-weights[,3]
+flexdat$weights<-30-weights[,3]
 
-#write out for future use
-flex_behav<-cbind(flex_behav,flexdat)
-write.csv(flex_behav,'/data/engine/rgerraty/learn_dyncon/flex_behav.csv')
+str_ind=c(49,51,54,104,106,109);
+
+flexdat<-melt(flexdat,id=c("subject","Block","Corr","weights"))
+
+names(flexdat)[c(5,6)]<-c("ROI","flex")
+
+flexdat$ROI<-as.factor(as.numeric(flexdat$ROI))
 
 
-#fit mixed-effects model in lme4 with wald approximation to p-value
-mlearn_glmer<-glmer(correct~str_flex+(str_flex||subject),data=flex_behav,family=binomial,weights=flex_behav$weights)
+flexdat_str<-subset(flexdat,ROI %in% str_ind)
+flexdat_str$ROI<-as.factor(flexdat_str$ROI)
+
+flexdat_str_avg<-melt(tapply(flexdat_str$flex,list(flexdat_str$subject,flexdat_str$ROI),mean,na.rm=1))
+names(flexdat_str_avg)<-c("subject","ROI","flex")
+flexdat_str_avg<-subset(flexdat_str_avg,ROI %in% str_ind)
+
+flexdat_str$meanflex<-rep(flexdat_str_avg$flex,each=4)
+
+flexdat_str_melt<-melt(tapply(flexdat_str$flex,list(flexdat_str$subject,flexdat_str$Block),mean))
+names(flexdat_str_melt)<-c("subject","Block","flex")
+
+
+
+flexdat_str_melt$correct<-melt(tapply(flexdat_str$Corr,list(flexdat_str$subject,flexdat_str$Block),mean))$value
+flexdat_str_melt$weights<-melt(tapply(flexdat_str$weights,list(flexdat_str$subject,flexdat_str$Block),mean))$value
+
+
+
+m_str<-glmer(correct~flex+(flex||subject),
+             family=binomial,weights=weights,
+             data=flexdat_str_melt)
+
+write.csv(flexdat_str_melt,'/data/engine/rgerraty/learn_dyncon/flex_behav.csv')
 
 #for posterior inference, run bayesian model using brms wrapper for stan
 options(mc.cores = parallel::detectCores())
-flex_behav$numcorr<-as.integer(flex_behav$correct*flex_behav$weights)
-mlearn_stan<-brm(numcorr~str_flex+(str_flex|subject),data=flex_behav,family=binomial)
+flexdat_str_melt$numcorr<-as.integer(flexdat_str_melt$correct*flexdat_str_melt$weights)
+mlearn_stan<-brm(numcorr~flex+(flex|subject),data=flexdat_str_melt,family=binomial)
 
 
 ```
