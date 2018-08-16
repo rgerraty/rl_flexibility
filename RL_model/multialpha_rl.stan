@@ -1,13 +1,15 @@
 data {
-	int NS;//number of subjects
-	int MT;//maximum number of trials
-	int NStim;//number of stimuli (4)
-	int NC;//number of choices (2)
-	int NT[NS];//number of trials per subject
-	int stim[NS,MT];//stimulus shown (1-4)
-	real<lower=-1,upper=1> rew[NS,MT];//subject x trial reward, -1 for missed
-	int choice[NS,MT];//chosen option, -1 for missed
-	int choice_two[NS,MT];//1=chose two,0=chose one, -1 for missed
+  int NS;//number of subjects
+  int MT;//maximum number of trials
+  int NStim;//number of stimuli (4)
+  int NC;//number of choices (2)
+  int NR;//number of runs (4)
+  int NT[NS];//number of trials per subject
+  int stim[NS,MT];//stimulus shown (1-4)
+  int run[NS,MT];//which run is it (1:4)
+  real<lower=-1,upper=1> rew[NS,MT];//subject x trial reward, -1 for missed
+  int choice[NS,MT];//chosen option, -1 for missed
+  int choice_two[NS,MT];//1=chose two,0=chose one, -1 for missed
 }
 
 transformed data{
@@ -17,22 +19,33 @@ transformed data{
 
 parameters {
   //hyperpriors on alpha distribution
-  real<lower=0> a1;
-  real<lower=0> a2;
+  //real<lower=0> a1;
+  //real<lower=0> a2;
+  real mu_theta;
+  
+  real<lower=0> sigma_theta_sub;
+  real<lower=0> sigma_theta_run;
+  
+  //subject and run level deviations
+  real delta_theta_sub[NS];
+  real delta_theta_run[NR];
+  
   
   //hyperpriors on beta distribution
   real<lower=0> b1;
   real<lower=0> b2;
   
   
-  //subject-level alpha and betas
-  real<lower=0,upper=1> alpha[NS];
+  //subject-level betas
   real<lower=0> beta[NS];
 	
 }
 
 
 transformed parameters{
+  //alpha for each subject and run
+  real<lower=0,upper=1> alpha[NS,NR];
+  
   //subject x trials x choice Q value matrix
   real Q[NS,MT,NStim,NC]; 
   
@@ -54,6 +67,7 @@ transformed parameters{
   
   for (s in 1:NS) {
   	for (t in 1:NT[s]) {
+  	  alpha[s,run[s,t]]=inv_logit(mu_theta+delta_theta_sub[s]+delta_theta_run[run[s,t]]);
   	  
   	  //set initial values of Q and delta on first trial
 		  if(t == 1) {
@@ -73,7 +87,7 @@ transformed parameters{
 		        for (st in 1:NStim){
 		          if (stim[s,t]==st){
 		            Q[s,t+1,st,choice[s,t]]= Q[s,t,st,choice[s,t]] +
-		            alpha[s]*delta[s,t];
+		            alpha[s,run[s,t]]*delta[s,t];
 		          }else{		        
 		            //value of chosen option for unpresented stims not updated
 		            Q[s,t+1,st,choice[s,t]]= Q[s,t,st,choice[s,t]];
@@ -100,13 +114,22 @@ transformed parameters{
 
 model {
   //hyperpriors
-  a1 ~ cauchy(0,5);
-  a2 ~ cauchy(0,5);
+  //a1 ~ cauchy(0,5);
+  //a2 ~ cauchy(0,5);
+  mu_theta~normal(0,1);
+  
+  sigma_theta_sub~cauchy(0,2.5);
+  sigma_theta_run~cauchy(0,2.5);
+  
   b1 ~ cauchy(0,5);
   b2 ~ cauchy(0,5);
   
   //distributions of subject effects
-  alpha ~ beta(a1,a2);
+  //alpha ~ beta(a1,a2);
+  delta_theta_sub~normal(0,sigma_theta_sub);
+  delta_theta_run~normal(0,sigma_theta_run);
+  
+  
   beta ~ gamma(b1,1/b2);
   
   

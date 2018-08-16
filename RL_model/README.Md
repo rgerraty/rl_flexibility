@@ -55,6 +55,7 @@ dat$chosen[dat$choice==choices[2]]=2
 dat$unchosen=abs(dat$chosen-3)
 dat$chose_two<-dat$chosen==2
 
+NR=4;
 subs = unique(dat$sub);
 NS = length(subs);
 NStim=length(unique(dat$stim));
@@ -65,11 +66,15 @@ unchoice=choice;
 choice_two=choice;
 rew = choice;
 stim=choice;
+run=choice;
+
+dat$run<-ceiling(dat$trial/MT*NR)
 
 for (i in 1:NS) {
   NT[i] = nrow(subset(dat,sub==subs[i]));
 
   stim[i,1:NT[i]] = subset(dat,sub==subs[i])$stim;
+  run[i,1:NT[i]] = subset(dat,sub==subs[i])$run;
   
   #choice and reward history
   choice[i,1:NT[i]] = subset(dat,sub==subs[i])$chosen;
@@ -85,12 +90,28 @@ choice[is.na(choice)]<--1
 unchoice[is.na(unchoice)]<--1
 rew[is.na(rew)]<--1
 choice_two[is.na(choice_two)]<--1
+rew[run==0]<- -1 
 
 rl_standata = list(NS=NS, NC=2, NStim=NStim, MT=MT, NT= NT, choice=choice, 
 stim=stim,choice_two=choice_two,rew=rew );
 rl_fit <- stan(file = '~/GitHub/rl_flexibility/RL_model/standard_rl.stan', 
 data = rl_standata, iter = 1250, warmup = 250, chains = 4)
-save(rl_fit,file='~/Documents/rl_fit')
+save(rl_fit,file='~/Documents/RL_Flexibility/data/rl_fit')
+
+rl_standata_multialpha = list(NS=NS, NC=2, NStim=NStim, MT=MT, NT= NT, choice=choice, 
+stim=stim,choice_two=choice_two,rew=rew,run=run,NR=NR );
+rl_multialpha_fit <- stan(file = '~/GitHub/rl_flexibility/RL_model/multialpha_rl.stan', 
+data = rl_standata_multialpha, iter = 1250, warmup = 250, chains = 4)
+save(rl_multialpha_fit,file='~/Documents/RL_Flexibility/data/rl_multialpha_fit')
+
+library(loo)
+rl_fit_llik<-extract_log_lik(rl_fit)
+rl_multialpha_fit_llik<-extract_log_lik(rl_multialpha_fit)
+
+rl_loo<-loo(rl_fit_llik)
+rl_multialpha_loo<-loo(rl_multialpha_fit_llik)
+
+compare(rl_loo,rl_multialpha_loo)
 ```
 
 ### Extract parameters from model
@@ -98,9 +119,6 @@ R
 ```.r
 fit_rl<-load('~/Documents/rl_fit')
 fit_extract<-extract(rl_fit,permute=T)
-
-fit_extract$beta_mean<-fit_extract$b1/fit_extract$b2
-fit_extract$alpha_mean<-fit_extract$a1/(fit_extract$a1+fit_extract$a2)
 
 betas<-apply(fit_extract$beta,2,mean)
 alphas<-apply(fit_extract$alpha,2,mean)
