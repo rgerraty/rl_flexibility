@@ -1,13 +1,13 @@
 data {
-  int NS;//number of subjects
-  int MT;//maximum number of trials
-  int NStim;//number of stimuli (4)
-  int NC;//number of choices (2)
-  int NT[NS];//number of trials per subject
-  int stim[NS,MT];//stimulus shown (1-4)
-  real<lower=-1,upper=1> rew[NS,MT];//subject x trial reward, -1 for missed
-  int choice[NS,MT];//chosen option, -1 for missed
-  int choice_two[NS,MT];//1=chose two,0=chose one, -1 for missed
+	int NS;//number of subjects
+	int MT;//maximum number of trials
+	int NStim;//number of stimuli (4)
+	int NC;//number of choices (2)
+	int NT[NS];//number of trials per subject
+	int stim[NS,MT];//stimulus shown (1-4)
+	real<lower=-1,upper=1> rew[NS,MT];//subject x trial reward, -1 for missed
+	int choice[NS,MT];//chosen option, -1 for missed
+	int choice_two[NS,MT];//1=chose two,0=chose one, -1 for missed
 }
 
 transformed data{
